@@ -414,7 +414,7 @@
     <!-- Landing pública: sin sesión, solo la imagen -->
     <div th:if="${currentEmail == null}" class="landing-public">
         <video class="landing-img" autoplay muted loop playsinline preload="auto"
-               th:attr="data-src-desktop=@{/img/sapo2.mp4},data-src-mobile=@{/img/sapo_mob.mp4}"
+               th:attr="data-src-desktop=@{/img/sapo2.mp4},data-src-mobile=@{/img/sapo2_mob.mp4}"
                aria-label="invenFact · Sistema de Inventario y Facturación">
             <source th:src="@{/img/sapo2.mp4}" type="video/mp4">
         </video>
