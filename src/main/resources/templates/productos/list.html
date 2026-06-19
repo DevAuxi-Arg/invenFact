@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es"
+      th:replace="~{layout :: document(titulo='Productos', contenido=~{::main})}">
+<body>
+<main>
+
+    <!-- Header de sección -->
+    <div class="page-header section-green">
+        <div class="page-header-icon">
+            <i class="bi bi-box" aria-hidden="true"></i>
+        </div>
+        <div class="page-header-body">
+            <div class="page-header-eyebrow">Catálogo</div>
+            <h1 class="page-header-title">Productos</h1>
+        </div>
+        <div class="page-header-actions">
+            <a th:href="@{/productos/catalogo}" class="btn btn-outline-section-green">
+                <i class="bi bi-grid-1x2"></i> Catálogo por categoría
+            </a>
+            <a th:href="@{/productos/nuevo}" class="btn btn-section-green">
+                <i class="bi bi-plus-circle"></i> Nuevo producto
+            </a>
+        </div>
+    </div>
+
+    <!-- Buscador -->
+    <div class="app-card mb-3">
+        <div class="card-body form-section section-green">
+            <form th:action="@{/productos}" method="get">
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <input type="text" name="nombre" class="form-control"
+                               placeholder="Buscar por nombre…"
+                               th:value="${nombre}">
+                    </div>
+                    <div class="col-md-4">
+                        <select name="categoriaId" id="filtroCategoria" class="form-select">
+                            <option value="">Todas las categorías</option>
+                            <option th:each="cat : ${categorias}"
+                                    th:value="${cat.id()}"
+                                    th:attr="data-icon=${cat.iconoUrl()}"
+                                    th:text="${cat.nombre()}"
+                                    th:selected="${categoriaId != null and categoriaId == cat.id()}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-grid">
+                        <button type="submit" class="btn btn-outline-section-green">
+                            <i class="bi bi-search"></i> Buscar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="app-card">
+        <div class="table-responsive">
+            <table class="table table-hover app-table">
+                <thead>
+                <tr>
+                    <th style="width: 70px">ID</th>
+                    <th>Nombre</th>
+                    <th>Categoría</th>
+                    <th class="text-end">Precio base</th>
+                    <th class="text-end">Final (ARS)</th>
+                    <th class="text-end">Final (USD)</th>
+                    <th class="text-end">Stock</th>
+                    <th style="width: 120px" class="text-end">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(productos)}">
+                    <td colspan="8" class="text-center text-muted py-4">
+                        <i class="bi bi-inbox" style="font-size: 1.6rem; opacity: 0.5;"></i><br>
+                        No hay productos para mostrar.
+                    </td>
+                </tr>
+                <tr th:each="p : ${productos}">
+                    <td><span class="text-muted" th:text="${p.id()}"></span></td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <img th:if="${p.imagenUrl() != null and !p.imagenUrl().isEmpty()}"
+                                 th:src="${p.imagenUrl()}" alt=""
+                                 style="width:40px;height:40px;object-fit:cover;border-radius:6px;flex:none;"
+                                 onerror="this.style.display='none'">
+                            <div>
+                                <strong th:text="${p.nombre()}"></strong>
+                                <div class="small text-muted" th:text="${p.descripcion()}"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <img th:if="${p.categoria().iconoUrl() != null and !p.categoria().iconoUrl().isEmpty()}"
+                                 th:src="${p.categoria().iconoUrl()}" alt=""
+                                 style="width:24px;height:24px;object-fit:contain;flex:none;"
+                                 onerror="this.style.display='none'">
+                            <div>
+                                <span class="badge-cat" th:text="${p.categoria().nombre()}"></span>
+                                <div class="small text-muted"
+                                     th:text="${'IVA ' + #numbers.formatDecimal(p.categoria().alicuotaIva(), 1, 2) + '%'}"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-end">
+                        <span th:text="${p.moneda()}" class="text-muted small"></span>
+                        <span th:text="${#numbers.formatDecimal(p.precio(), 1, 'COMMA', 2, 'POINT')}"></span>
+                    </td>
+                    <td class="text-end fw-semibold"
+                        th:text="${'$' + #numbers.formatDecimal(p.precioFinalArs(), 1, 'COMMA', 2, 'POINT')}"></td>
+                    <td class="text-end text-muted"
+                        th:text="${p.precioFinalUsd() != null ? 'US$' + #numbers.formatDecimal(p.precioFinalUsd(), 1, 'COMMA', 2, 'POINT') : '—'}"></td>
+                    <td class="text-end" th:text="${p.stock()}"></td>
+                    <td class="text-end">
+                        <a th:href="@{/productos/{id}/editar(id=${p.id()})}"
+                           class="btn btn-sm btn-outline-section-green"
+                           title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <form th:action="@{/productos/{id}/eliminar(id=${p.id()})}"
+                              method="post" class="d-inline"
+                              onsubmit="return confirm('¿Eliminar este producto?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                    title="Eliminar">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div th:with="qs=(${nombre != null and !#strings.isEmpty(nombre)} ? 'nombre=' + ${nombre} + '&' : '')
+                     + (${categoriaId != null} ? 'categoriaId=' + ${categoriaId} + '&' : '')
+                     + 'size=' + ${page.size} + '&',
+                  urlBase='/productos?' + ${qs}">
+        <div th:replace="~{fragments/paginacion :: paginacion(page=${page}, urlBase=${urlBase}, variante='green')}"></div>
+    </div>
+
+    <!-- Filtro de categorías con íconos (Tom Select) -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+    <script>
+        (function () {
+            if (typeof TomSelect === 'undefined') return;
+            var sel = document.getElementById('filtroCategoria');
+            if (!sel) return;
+            var ICONS = {};
+            Array.prototype.forEach.call(sel.options, function (o) {
+                var u = o.getAttribute('data-icon');
+                if (u) ICONS[o.value] = u;
+            });
+            function img(data, size) {
+                var u = ICONS[data.value];
+                return u
+                    ? '<img src="' + u + '" style="width:' + size + 'px;height:' + size +
+                      'px;object-fit:contain;margin-right:8px;vertical-align:middle;" ' +
+                      'onerror="this.style.display=\'none\'">'
+                    : '';
+            }
+            new TomSelect('#filtroCategoria', {
+                dropdownParent: 'body',
+                render: {
+                    option: function (data, escape) {
+                        return '<div class="d-flex align-items-center">' + img(data, 22) + escape(data.text) + '</div>';
+                    },
+                    item: function (data, escape) {
+                        return '<div class="d-flex align-items-center">' + img(data, 20) + escape(data.text) + '</div>';
+                    }
+                }
+            });
+        })();
+    </script>
+
+</main>
+</body>
+</html>

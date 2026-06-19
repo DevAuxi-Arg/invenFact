@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es"
+      th:replace="~{layout :: document(titulo='Parámetros', contenido=~{::main})}">
+<body>
+<main>
+
+    <!-- Header -->
+    <div class="page-header section-blue">
+        <div class="page-header-icon"><i class="bi bi-sliders"></i></div>
+        <div class="page-header-body">
+            <div class="page-header-eyebrow">Administración</div>
+            <h1 class="page-header-title">Parámetros del sistema</h1>
+        </div>
+    </div>
+
+    <div class="app-card">
+        <div class="table-responsive">
+            <table class="table app-table">
+                <thead>
+                <tr>
+                    <th style="width: 160px">Clave</th>
+                    <th>Descripción</th>
+                    <th style="width: 320px">Valor</th>
+                    <th style="width: 200px">Última actualización</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(parametros)}">
+                    <td colspan="4" class="text-center text-muted py-4">No hay parámetros.</td>
+                </tr>
+                <tr th:each="p : ${parametros}">
+                    <td><strong th:text="${p.clave()}"></strong></td>
+                    <td><span class="text-muted" th:text="${p.descripcion()}"></span></td>
+                    <td>
+                        <!-- Editable solo por ADMIN -->
+                        <form th:if="${isAdmin}" th:action="@{/admin/parametros/{clave}(clave=${p.clave()})}"
+                              method="post" class="d-flex gap-1 form-section">
+                            <input type="text" name="valor" class="form-control form-control-sm"
+                                   th:value="${p.valor()}">
+                            <button type="submit" class="btn btn-sm btn-section-blue" title="Guardar">
+                                <i class="bi bi-check2"></i>
+                            </button>
+                        </form>
+                        <span th:unless="${isAdmin}" th:text="${p.valor()}"></span>
+                    </td>
+                    <td class="text-muted" style="font-size:12.5px">
+                        <span th:text="${p.fechaActualizacion() != null} ? ${#temporals.format(p.fechaActualizacion(), 'dd/MM/yyyy HH:mm')} : '—'"></span>
+                        <span th:if="${p.actualizadoPor()}" th:text="'· ' + ${p.actualizadoPor()}"></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <p class="text-muted mt-3" style="font-size:13px">
+        <i class="bi bi-info-circle"></i>
+        El parámetro <strong>DOLAR</strong> es la cotización en pesos de 1 USD. Se usa para convertir y mostrar los precios de los productos.
+    </p>
+
+</main>
+</body>
+</html>

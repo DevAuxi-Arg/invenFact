@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es"
+      th:replace="~{layout :: document(titulo='Ventas · Dashboard', contenido=~{::main})}">
+<body>
+<main>
+
+    <style>
+        .kpi-card {
+            background: #fff; border-radius: 14px; border: 1px solid rgba(0,0,0,0.07);
+            padding: 1.25rem 1.4rem; display: flex; align-items: center; gap: 1rem; height: 100%;
+        }
+        .kpi-icon {
+            width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-size: 22px;
+        }
+        .kpi-green { background: #EAF3DE; color: #3B6D11; }
+        .kpi-blue  { background: #EDF4FD; color: #185FA5; }
+        .kpi-amber { background: #fdf3e0; color: #a96a12; }
+        .kpi-red   { background: #fde2e2; color: #a51b1b; }
+        .kpi-value { font-size: 1.45rem; font-weight: 700; color: #1a1d27; line-height: 1; }
+        .kpi-label { font-size: 12.5px; color: #6b7280; margin-top: 4px; }
+        .rank-num { font-weight: 700; color: #8a93a6; width: 24px; display: inline-block; }
+    </style>
+
+    <!-- Header -->
+    <div class="page-header section-green">
+        <div class="page-header-icon"><i class="bi bi-graph-up-arrow"></i></div>
+        <div class="page-header-body">
+            <div class="page-header-eyebrow">Reportes</div>
+            <h1 class="page-header-title">Dashboard de ventas</h1>
+        </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="row g-3 mb-3">
+        <div class="col-6 col-lg-3">
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-green"><i class="bi bi-cash-stack"></i></div>
+                <div>
+                    <div class="kpi-value" th:text="${'$' + #numbers.formatDecimal(resumen.totalFacturado(), 1, 'COMMA', 2, 'POINT')}">$0</div>
+                    <div class="kpi-label">Total facturado</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-blue"><i class="bi bi-calendar-month"></i></div>
+                <div>
+                    <div class="kpi-value" th:text="${'$' + #numbers.formatDecimal(resumen.ventasMesActual(), 1, 'COMMA', 2, 'POINT')}">$0</div>
+                    <div class="kpi-label">Ventas del mes</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-blue"><i class="bi bi-receipt"></i></div>
+                <div>
+                    <div class="kpi-value" th:text="${resumen.cantidadFacturas()}">0</div>
+                    <div class="kpi-label">Facturas emitidas</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-amber"><i class="bi bi-tag"></i></div>
+                <div>
+                    <div class="kpi-value" th:text="${'$' + #numbers.formatDecimal(resumen.ticketPromedio(), 1, 'COMMA', 2, 'POINT')}">$0</div>
+                    <div class="kpi-label">Ticket promedio</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-green"><i class="bi bi-percent"></i></div>
+                <div>
+                    <div class="kpi-value" th:text="${'$' + #numbers.formatDecimal(resumen.totalIva(), 1, 'COMMA', 2, 'POINT')}">$0</div>
+                    <div class="kpi-label">IVA facturado</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-red"><i class="bi bi-x-octagon"></i></div>
+                <div>
+                    <div class="kpi-value" th:text="${resumen.facturasAnuladas()}">0</div>
+                    <div class="kpi-label">Facturas anuladas</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico de ventas por mes -->
+    <div class="app-card mb-3">
+        <div class="card-body">
+            <h2 class="h6 mb-3"><i class="bi bi-bar-chart me-1"></i> Ventas por mes (ARS · últimos 6 meses)</h2>
+            <canvas id="chartVentas" height="120"></canvas>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <!-- Top productos -->
+        <div class="col-lg-6">
+            <div class="app-card h-100">
+                <div class="card-body">
+                    <h2 class="h6 mb-3"><i class="bi bi-trophy me-1"></i> Productos más vendidos</h2>
+                    <div class="table-responsive">
+                        <table class="table app-table mb-0">
+                            <thead>
+                            <tr><th>#</th><th>Producto</th><th class="text-end">Unid.</th><th class="text-end">Total (ARS)</th></tr>
+                            </thead>
+                            <tbody>
+                            <tr th:if="${#lists.isEmpty(topProductos)}">
+                                <td colspan="4" class="text-muted text-center py-3">Sin ventas todavía.</td>
+                            </tr>
+                            <tr th:each="p, it : ${topProductos}">
+                                <td><span class="rank-num" th:text="${it.count}"></span></td>
+                                <td th:text="${p.nombre()}"></td>
+                                <td class="text-end" th:text="${p.cantidad()}"></td>
+                                <td class="text-end fw-semibold"
+                                    th:text="${'$' + #numbers.formatDecimal(p.total(), 1, 'COMMA', 2, 'POINT')}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top clientes -->
+        <div class="col-lg-6">
+            <div class="app-card h-100">
+                <div class="card-body">
+                    <h2 class="h6 mb-3"><i class="bi bi-people me-1"></i> Mejores clientes</h2>
+                    <div class="table-responsive">
+                        <table class="table app-table mb-0">
+                            <thead>
+                            <tr><th>#</th><th>Cliente</th><th class="text-end">Facturas</th><th class="text-end">Total (ARS)</th></tr>
+                            </thead>
+                            <tbody>
+                            <tr th:if="${#lists.isEmpty(topClientes)}">
+                                <td colspan="4" class="text-muted text-center py-3">Sin ventas todavía.</td>
+                            </tr>
+                            <tr th:each="c, it : ${topClientes}">
+                                <td><span class="rank-num" th:text="${it.count}"></span></td>
+                                <td th:text="${c.nombre()}"></td>
+                                <td class="text-end" th:text="${c.cantidadFacturas()}"></td>
+                                <td class="text-end fw-semibold"
+                                    th:text="${'$' + #numbers.formatDecimal(c.total(), 1, 'COMMA', 2, 'POINT')}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const labels = /*[[${mesesLabels}]]*/ [];
+        const data = /*[[${mesesData}]]*/ [];
+        /*]]>*/
+        new Chart(document.getElementById('chartVentas'), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{ label: 'Ventas (ARS)', data: data, backgroundColor: '#3B6D11', borderRadius: 6 }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    </script>
+
+</main>
+</body>
+</html>

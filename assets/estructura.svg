@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 1120" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
+  <rect width="1180" height="1120" rx="14" fill="#0d1117"/>
+  <rect x="1" y="1" width="1178" height="1118" rx="14" fill="none" stroke="#1f2630" stroke-width="2"/>
+
+  <!-- Título -->
+  <text x="28" y="44" fill="#e6edf3" font-size="20" font-weight="bold">Estructura del proyecto · productos-api</text>
+  <text x="28" y="66" fill="#6e7681" font-size="13">Spring Boot · arquitectura en capas · un feature por paquete</text>
+  <line x1="28" y1="80" x2="1152" y2="80" stroke="#21262d" stroke-width="1"/>
+
+  <!-- Árbol Java -->
+  <text x="0" y="112" font-size="13.5">
+    <tspan x="28" fill="#8b949e" font-size="14" font-weight="bold">src/main/java  ·  com.willysoft.productosapi</tspan>
+
+    <tspan x="36" dy="34" fill="#8b949e" font-weight="bold">▸ config/</tspan><tspan fill="#6e7681">  —  OpenAPI / Swagger</tspan>
+    <tspan x="60" dy="18" fill="#adbac7">OpenApiConfig</tspan>
+
+    <tspan x="36" dy="28" fill="#58a6ff" font-weight="bold">▸ category/</tspan><tspan fill="#6e7681">  —  Catálogo · /api/categorias</tspan>
+    <tspan x="60" dy="18" fill="#adbac7">Category · CategoryRepository · CategoryService · CategoryController · dto/(CategoryRequest, CategoryResponse)</tspan>
+
+    <tspan x="36" dy="28" fill="#3fb950" font-weight="bold">▸ product/</tspan><tspan fill="#6e7681">  —  Catálogo · IVA por categoría + multimoneda · /api/productos</tspan>
+    <tspan x="60" dy="18" fill="#adbac7">Product · Moneda · ProductRepository · ProductService · ProductController · ProductSpecifications</tspan>
+    <tspan x="60" dy="18" fill="#adbac7">PriceCalculationService · dto/(ProductRequest, ProductResponse, PriceBreakdown)</tspan>
+
+    <tspan x="36" dy="28" fill="#2dd4bf" font-weight="bold">▸ cliente/</tspan><tspan fill="#6e7681">  —  Clientes · condición IVA (exento) · /api/clientes</tspan>
+    <tspan x="60" dy="18" fill="#adbac7">Cliente · CondicionIva · ClienteRepository · ClienteService · ClienteController · dto/(ClienteRequest, ClienteResponse)</tspan>
+
+    <tspan x="36" dy="28" fill="#f0883e" font-weight="bold">▸ factura/</tspan><tspan fill="#6e7681">  —  Facturación (snapshot) + Ventas · /api/facturas · /api/ventas</tspan>
+    <tspan x="60" dy="18" fill="#adbac7">EstadoFactura · Factura · LineaFactura · FacturaRepository · FacturaService · FacturaController</tspan>
+    <tspan x="60" dy="18" fill="#adbac7">VentasService · VentasController · dto/(FacturaCreateRequest, FacturaResponse, LineaFacturaRequest,</tspan>
+    <tspan x="60" dy="18" fill="#adbac7">LineaFacturaResponse, VentasDashboard, VentasResumen, ProductoVendido, ClienteTop)</tspan>
+
+    <tspan x="36" dy="28" fill="#bc8cff" font-weight="bold">▸ user/</tspan><tspan fill="#6e7681">  —  Usuarios + roles · /api/usuarios</tspan>
+    <tspan x="60" dy="18" fill="#adbac7">Role · User · UserRepository · UserService · UserController</tspan>
+    <tspan x="60" dy="18" fill="#adbac7">dto/(UserCreateRequest, UserUpdateRequest, UserResponse, ChangePasswordRequest, UpdateRoleRequest)</tspan>
+
+    <tspan x="36" dy="28" fill="#a371f7" font-weight="bold">▸ auth/</tspan><tspan fill="#6e7681">  —  Login JWT + refresh (revocación) + recuperación de contraseña · /api/auth</tspan>
+    <tspan x="60" dy="18" fill="#adbac7">AuthController · RefreshToken (+Repository, +Service) · PasswordResetToken (+Repository, +Service)</tspan>
+    <tspan x="60" dy="18" fill="#adbac7">EmailService · TokenCleanupJob · dto/(LoginRequest, AuthResponse, RefreshRequest, ForgotPasswordRequest, ResetPasswordRequest)</tspan>
+
+    <tspan x="36" dy="28" fill="#f85149" font-weight="bold">▸ security/</tspan><tspan fill="#6e7681">  —  Spring Security · JWT (API) + sesión (Web) · 3 roles · seeder</tspan>
+    <tspan x="60" dy="18" fill="#adbac7">SecurityConfig · JwtService · JwtAuthenticationFilter · CustomUserDetailsService</tspan>
+    <tspan x="60" dy="18" fill="#adbac7">RestAuthenticationEntryPoint · SecurityUtils · DataSeeder · LoginAuditListener</tspan>
+
+    <tspan x="36" dy="28" fill="#8b949e" font-weight="bold">▸ parametro/</tspan><tspan fill="#6e7681">  —  Config global (dólar) · /api/parametros</tspan>
+    <tspan x="60" dy="18" fill="#adbac7">Parametro · ParametroRepository · ParametroService · ParametroController · dto/(ParametroResponse, ParametroUpdateRequest)</tspan>
+
+    <tspan x="36" dy="28" fill="#8b949e" font-weight="bold">▸ audit/</tspan><tspan fill="#6e7681">  —  Auditoría de acciones (tabla auditoria)</tspan>
+    <tspan x="60" dy="18" fill="#adbac7">AuditLog · AuditLogRepository · AuditService</tspan>
+
+    <tspan x="36" dy="28" fill="#d2a8ff" font-weight="bold">▸ web/</tspan><tspan fill="#6e7681">  —  Capa MVC · vistas Thymeleaf · / · /admin/**</tspan>
+    <tspan x="60" dy="18" fill="#adbac7">HomeController · CategoryWebController · ProductWebController · ClienteWebController · FacturaWebController</tspan>
+    <tspan x="60" dy="18" fill="#adbac7">UserWebController · ParametroWebController · AuthWebController · DashboardController · VentasDashboardController · GlobalWebModelAdvice</tspan>
+
+    <tspan x="36" dy="28" fill="#ff7b72" font-weight="bold">▸ exception/</tspan><tspan fill="#6e7681">  —  401 / 403 / 404 / 409 → JSON uniforme (solo REST)</tspan>
+    <tspan x="60" dy="18" fill="#adbac7">ResourceNotFoundException · ConflictException · ForbiddenException · GlobalExceptionHandler</tspan>
+
+    <tspan x="36" dy="28" fill="#e3b341">ProductosApiApplication</tspan><tspan fill="#6e7681">  —  arranque (@SpringBootApplication, @EnableScheduling)</tspan>
+  </text>
+
+  <!-- Recursos -->
+  <line x1="28" y1="952" x2="1152" y2="952" stroke="#21262d" stroke-width="1"/>
+  <text x="0" y="980" font-size="13.5">
+    <tspan x="28" fill="#8b949e" font-size="14" font-weight="bold">src/main/resources</tspan>
+    <tspan x="36" dy="26" fill="#e3b341" font-weight="bold">▸ templates/</tspan><tspan fill="#6e7681"> (Thymeleaf + Bootstrap)</tspan>
+    <tspan x="60" dy="18" fill="#adbac7">layout · home · login · forgot-password · reset-password · fragments/paginacion</tspan>
+    <tspan x="60" dy="18" fill="#adbac7">categorias/(list,form) · productos/(list,form) · clientes/(list,form) · facturas/(list,form,detalle)</tspan>
+    <tspan x="60" dy="18" fill="#adbac7">admin/(dashboard, ventas) · admin/usuarios/(list,form) · admin/parametros/(list)</tspan>
+    <tspan x="36" dy="22" fill="#adbac7">application.properties</tspan>
+  </text>
+</svg>

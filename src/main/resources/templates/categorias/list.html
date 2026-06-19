@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es"
+      th:replace="~{layout :: document(titulo='Categorías', contenido=~{::main})}">
+<body>
+<main>
+
+    <!-- Header de sección -->
+    <div class="page-header section-blue">
+        <div class="page-header-icon">
+            <i class="bi bi-tags" aria-hidden="true"></i>
+        </div>
+        <div class="page-header-body">
+            <div class="page-header-eyebrow">Catálogo</div>
+            <h1 class="page-header-title">Categorías</h1>
+        </div>
+        <div class="page-header-actions">
+            <a th:href="@{/categorias/nueva}" class="btn btn-section-blue">
+                <i class="bi bi-plus-circle"></i> Nueva categoría
+            </a>
+        </div>
+    </div>
+
+    <!-- Buscador -->
+    <div class="app-card mb-3">
+        <div class="card-body form-section">
+            <form th:action="@{/categorias}" method="get">
+                <div class="row g-2">
+                    <div class="col-md-10">
+                        <input type="text" name="nombre" class="form-control"
+                               placeholder="Buscar por nombre…"
+                               th:value="${nombre}">
+                    </div>
+                    <div class="col-md-2 d-grid">
+                        <button type="submit" class="btn btn-outline-section-blue">
+                            <i class="bi bi-search"></i> Buscar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="app-card">
+        <div class="table-responsive">
+            <table class="table table-hover app-table">
+                <thead>
+                <tr>
+                    <th style="width: 80px">ID</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th style="width: 90px">IVA</th>
+                    <th style="width: 140px" class="text-end">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(categorias)}">
+                    <td colspan="5" class="text-center text-muted py-4">
+                        <i class="bi bi-inbox" style="font-size: 1.6rem; opacity: 0.5;"></i><br>
+                        No hay categorías para mostrar.
+                    </td>
+                </tr>
+                <tr th:each="c : ${categorias}">
+                    <td><span class="text-muted" th:text="${c.id()}"></span></td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <img th:if="${c.iconoUrl() != null and !c.iconoUrl().isEmpty()}"
+                                 th:src="${c.iconoUrl()}" alt=""
+                                 style="width:32px;height:32px;object-fit:contain;flex:none;"
+                                 onerror="this.style.display='none'">
+                            <strong th:text="${c.nombre()}"></strong>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="text-muted" th:text="${c.descripcion()}"></span>
+                    </td>
+                    <td>
+                        <span class="badge-cat" th:text="${c.alicuotaIva() != null ? #numbers.formatDecimal(c.alicuotaIva(), 1, 2) + ' %' : '—'}"></span>
+                    </td>
+                    <td class="text-end">
+                        <a th:href="@{/categorias/{id}/editar(id=${c.id()})}"
+                           class="btn btn-sm btn-outline-section-blue"
+                           title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <form th:action="@{/categorias/{id}/eliminar(id=${c.id()})}"
+                              method="post" class="d-inline"
+                              onsubmit="return confirm('¿Eliminar esta categoría?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                    title="Eliminar">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div th:with="qs=${(nombre != null and !#strings.isEmpty(nombre)) ? 'nombre=' + nombre + '&size=' + page.size + '&' : 'size=' + page.size + '&'},
+                  urlBase='/categorias?' + qs">
+        <div th:replace="~{fragments/paginacion :: paginacion(page=${page}, urlBase=${urlBase}, variante='blue')}"></div>
+    </div>
+
+</main>
+</body>
+</html>

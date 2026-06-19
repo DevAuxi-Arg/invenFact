@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="es"
+      th:fragment="document(titulo, contenido)">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title th:text="${titulo} ?: 'Productos API'">Productos API</title>
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" th:href="@{/img/favicon/favicon-96x96.png}" sizes="96x96">
+    <link rel="shortcut icon" th:href="@{/img/favicon/favicon.ico}">
+    <link rel="apple-touch-icon" sizes="180x180" th:href="@{/img/favicon/apple-touch-icon.png}">
+    <link rel="manifest" th:href="@{/img/favicon/site.webmanifest}">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        /* ── Fuente del título de la app ──────────────── */
+        @font-face {
+            font-family: 'Kind Daily';
+            src: url('/fonts/Kind-Daily.ttf.woff') format('woff');
+            font-display: swap;
+        }
+
+        /* ── Tokens de tema ───────────────────────────── */
+        :root {
+            --c-blue:         #185FA5;
+            --c-blue-hover:   #134d87;
+            --c-blue-soft:    #EDF4FD;
+            --c-blue-accent:  #378ADD;
+
+            --c-green:        #3B6D11;
+            --c-green-hover:  #2d530c;
+            --c-green-soft:   #EAF3DE;
+            --c-green-accent: #8FC24A;
+
+            /* Bandas oscuras en violeta profundo (page-header, hero) */
+            --c-dark:         #26193f;
+            --c-dark-2:       #1c1233;
+
+            /* Header (navbar) y footer en violeta vivo */
+            --c-header:       #7c3aed;
+            --c-header-2:     #6d28d9;
+
+            --c-on-dark:      #f3eefc;
+            --c-on-dark-mute: #cbb8f0;
+
+            --c-text:         #1a1d27;
+            --c-muted:        #6b7280;
+            --c-bg:           #f5f6f9;
+            --c-border:       rgba(0, 0, 0, 0.07);
+        }
+
+        /* ── Base ─────────────────────────────────────── */
+        body {
+            background: var(--c-bg);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: var(--c-text);
+            /* App-shell: navbar y footer fijos; el contenido scrollea adentro */
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Solo el contenido del medio scrollea (no toda la página) */
+        body > main {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow-y: auto;
+        }
+
+        .navbar-willysoft,
+        .footer-willysoft {
+            flex-shrink: 0;
+        }
+
+        /* En pantallas chicas (navbar colapsable) vuelve al scroll normal de la página */
+        @media (max-width: 991.98px) {
+            body { height: auto; min-height: 100vh; overflow: visible; }
+            body > main { overflow-y: visible; }
+
+            /* El menú hamburguesa flota por encima del contenido
+               en vez de empujarlo hacia abajo */
+            .navbar-willysoft { position: relative; }
+            .navbar-willysoft .navbar-collapse {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                z-index: 1030;
+                background: linear-gradient(135deg, var(--c-header), var(--c-header-2));
+                padding: 12px 16px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+                box-shadow: 0 10px 26px rgba(0, 0, 0, 0.28);
+            }
+        }
+
+        /* Usuario conectado en el navbar: ícono arriba, pastilla del email abajo */
+        .navbar-willysoft .user-nav {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            padding: 4px 10px;
+        }
+
+        /* El ícono del usuario es el botón de cerrar sesión: hover naranja */
+        .navbar-willysoft .user-logout-btn {
+            background: transparent;
+            border: none;
+            padding: 0;
+            line-height: 1;
+            cursor: pointer;
+            color: #ffffff;
+            transition: color 0.15s ease, transform 0.15s ease;
+        }
+
+        .navbar-willysoft .user-logout-btn .bi {
+            font-size: 19px;
+        }
+
+        /* Avatar del usuario (imagen por URL) en el navbar */
+        .navbar-willysoft .user-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            transition: transform 0.15s ease, border-color 0.15s ease;
+        }
+
+        .navbar-willysoft .user-logout-btn:hover .user-avatar,
+        .navbar-willysoft .user-logout-btn:focus .user-avatar {
+            transform: scale(1.12);
+            border-color: #ffab40;
+        }
+
+        .navbar-willysoft .user-logout-btn:hover,
+        .navbar-willysoft .user-logout-btn:focus {
+            color: #ffab40;
+            transform: scale(1.12);
+        }
+
+        .navbar-willysoft .user-chip {
+            display: block;
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 11px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+        }
+
+        .navbar-willysoft .user-rol {
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #ffab40;
+            line-height: 1;
+        }
+
+        /* ── Navbar ───────────────────────────────────── */
+        .navbar-willysoft {
+            background: linear-gradient(135deg, var(--c-header), var(--c-header-2));
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 10px 0;
+            min-height: 78px;
+        }
+
+        .navbar-willysoft .navbar-brand {
+            color: var(--c-on-dark);
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .navbar-willysoft .navbar-brand:hover {
+            color: #ffffff;
+        }
+
+        .brand-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #1a2540, #2a3f70);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(100, 160, 255, 0.28);
+            box-shadow: 0 4px 14px rgba(55, 138, 221, 0.18);
+            flex-shrink: 0;
+        }
+
+        .brand-icon img {
+            width: 62px;
+            height: 62px;
+            object-fit: contain;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+
+        .brand-text .brand-main {
+            font-family: 'Kind Daily', 'Segoe UI', system-ui, sans-serif;
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--c-on-dark);
+            white-space: nowrap;
+        }
+
+        /* ── Título grande de la landing (sin sesión) ─── */
+        .landing-nav .container {
+            position: relative;
+            justify-content: center;
+            min-height: 64px;
+        }
+
+        .app-title {
+            font-family: 'Kind Daily', 'Segoe UI', system-ui, sans-serif;
+            font-size: 2.6rem;
+            font-weight: 400;
+            color: #ffffff;
+            line-height: 1;
+            letter-spacing: 0.5px;
+        }
+
+        /* Logo que reemplaza el nombre de la app (1264×245) */
+        .app-logo {
+            display: block;
+            height: 46px;          /* ~ alto del título 2.6rem */
+            width: auto;
+            max-width: 70vw;       /* no choca con el logo izq. ni con "Entrar" */
+            /* Aclarado tenue + leve separación del fondo */
+            filter: brightness(1.3) contrast(0.97)
+                    drop-shadow(0 1px 3px rgba(0, 0, 0, 0.35));
+        }
+
+        @media (max-width: 575.98px) {
+            .landing-nav .container { min-height: 52px; }
+            .app-logo { height: 30px; max-width: 58vw; }
+            .landing-entrar {
+                font-size: 12px;
+                font-weight: 600;
+                padding: 4px 8px;
+                right: 4px;
+                gap: 4px;
+            }
+            .landing-entrar i { font-size: 13px; }
+        }
+
+        .landing-logo {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 80px;
+            width: auto;
+        }
+
+        .landing-entrar {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--c-on-dark-mute) !important;
+            text-decoration: none;
+            font-size: 30px;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.15s, background 0.15s;
+        }
+
+        .landing-entrar:hover {
+            color: #ffffff !important;
+            background: rgba(255, 255, 255, 0.14);
+        }
+
+        .brand-text .brand-sub {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #e6dbfb;
+            margin-top: 2px;
+        }
+
+        .navbar-willysoft .nav-link {
+            color: var(--c-on-dark-mute) !important;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 16px !important;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            transition: color 0.15s, background 0.15s;
+        }
+
+        .navbar-willysoft .nav-link:hover {
+            color: #ffffff !important;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        /* Coloreados por sección — coherentes con el home */
+        .navbar-willysoft .nav-link.nav-categorias:hover,
+        .navbar-willysoft .nav-link.nav-categorias.active,
+        .navbar-willysoft .nav-link.nav-productos:hover,
+        .navbar-willysoft .nav-link.nav-productos.active,
+        .navbar-willysoft .nav-link.nav-swagger:hover,
+        .navbar-willysoft .nav-link.nav-swagger.active {
+            color: #ffffff !important;
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .navbar-willysoft .navbar-toggler {
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .navbar-willysoft .navbar-toggler-icon {
+            filter: invert(1);
+        }
+
+        /* ── Page header (espejo del hero) ────────────── */
+        .page-header {
+            background: linear-gradient(135deg, #4c1d95, #6d28d9);
+            border-radius: 16px;
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 1.1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -80px;
+            right: -80px;
+            width: 260px;
+            height: 260px;
+            background: radial-gradient(circle, var(--ph-glow, rgba(55, 138, 221, 0.12)) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .page-header.section-blue  { --ph-glow: rgba(55, 138, 221, 0.18); }
+        .page-header.section-green { --ph-glow: rgba(143, 194, 74, 0.18); }
+
+        .page-header-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-blue  .page-header-icon { background: var(--c-blue-soft);  color: var(--c-blue); }
+        .section-green .page-header-icon { background: var(--c-green-soft); color: var(--c-green); }
+
+        .page-header-body { flex: 1; position: relative; z-index: 1; }
+
+        .page-header-eyebrow {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            color: #ffab40;
+        }
+
+        /* Naranja en todas las secciones, para contrastar con el fondo violeta */
+        .section-blue  .page-header-eyebrow,
+        .section-green .page-header-eyebrow { color: #ffab40; }
+
+        .page-header-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--c-on-dark);
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .page-header-actions {
+            position: relative;
+            z-index: 1;
+            margin-left: auto;
+        }
+
+        /* ── Botones de sección ───────────────────────── */
+        .btn-section-blue {
+            background: var(--c-blue);
+            color: #fff;
+            border: none;
+            font-weight: 500;
+        }
+        .btn-section-blue:hover,
+        .btn-section-blue:focus { background: var(--c-blue-hover); color: #fff; }
+
+        .btn-section-green {
+            background: var(--c-green);
+            color: #fff;
+            border: none;
+            font-weight: 500;
+        }
+        .btn-section-green:hover,
+        .btn-section-green:focus { background: var(--c-green-hover); color: #fff; }
+
+        .btn-outline-section-blue {
+            background: transparent;
+            color: var(--c-blue);
+            border: 1px solid var(--c-blue);
+        }
+        .btn-outline-section-blue:hover { background: var(--c-blue); color: #fff; }
+
+        .btn-outline-section-green {
+            background: transparent;
+            color: var(--c-green);
+            border: 1px solid var(--c-green);
+        }
+        .btn-outline-section-green:hover { background: var(--c-green); color: #fff; }
+
+        /* ── Cards y tablas ───────────────────────────── */
+        .app-card {
+            background: #fff;
+            border-radius: 14px;
+            border: 1px solid var(--c-border);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+        }
+
+        .app-card .card-body { padding: 1.25rem 1.5rem; }
+
+        .app-table { margin-bottom: 0; }
+
+        .app-table thead th {
+            background: #f8f9fc;
+            color: #4a5468;
+            font-size: 11.5px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--c-border);
+            padding: 12px 14px;
+        }
+
+        .app-table tbody td {
+            font-size: 14px;
+            color: var(--c-text);
+            padding: 12px 14px;
+            vertical-align: middle;
+            border-color: #f0f1f4;
+        }
+
+        .app-table tbody tr:hover { background: #fafbfd; }
+
+        .badge-cat {
+            background: var(--c-blue-soft);
+            color: var(--c-blue);
+            font-weight: 600;
+            font-size: 11.5px;
+            padding: 5px 10px;
+            border-radius: 6px;
+        }
+
+        /* ── Form genérico ────────────────────────────── */
+        .form-section .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #4a5468;
+            margin-bottom: 6px;
+        }
+
+        .form-section .form-control,
+        .form-section .form-select {
+            border-radius: 8px;
+            border: 1px solid #d9dde6;
+            padding: 9px 12px;
+            font-size: 14px;
+        }
+
+        .form-section .form-control:focus,
+        .form-section .form-select:focus {
+            box-shadow: 0 0 0 3px rgba(55, 138, 221, 0.15);
+            border-color: var(--c-blue-accent);
+        }
+
+        .form-section.section-green .form-control:focus,
+        .form-section.section-green .form-select:focus {
+            box-shadow: 0 0 0 3px rgba(143, 194, 74, 0.18);
+            border-color: var(--c-green-accent);
+        }
+
+        /* ── Alertas ──────────────────────────────────── */
+        .alert {
+            border-radius: 10px;
+            border: none;
+            font-size: 14px;
+        }
+
+        /* ── Paginación ───────────────────────────────── */
+        .app-pagination .page-link {
+            border-radius: 8px !important;
+            margin: 0 2px;
+            border: 1px solid #e3e6ec;
+            color: var(--c-text);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 6px 11px;
+        }
+
+        .app-pagination .page-item.active .page-link {
+            background: var(--c-blue);
+            border-color: var(--c-blue);
+            color: #fff;
+        }
+
+        .app-pagination.section-green .page-item.active .page-link {
+            background: var(--c-green);
+            border-color: var(--c-green);
+        }
+
+        .app-pagination .page-item.disabled .page-link {
+            background: #f5f6f9;
+            color: #b6bcc7;
+        }
+
+        /* ── Footer ───────────────────────────────────── */
+        .footer-willysoft {
+            background: linear-gradient(135deg, var(--c-header), var(--c-header-2));
+            border-top: 3px solid #ffab40;
+            padding: 0.35rem 1rem;
+            margin-top: 0;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        .footer-copy {
+            font-size: 11px;
+            letter-spacing: 0.02em;
+            /* Pulso tipo bombilla: gana brillo/definición y nunca se apaga */
+            color: #c9bbe6;
+            animation: bombillaGlow 2.6s ease-in-out infinite;
+        }
+
+        @keyframes bombillaGlow {
+            0%, 100% {
+                color: #c9bbe6;
+                text-shadow: 0 0 1px rgba(255, 200, 120, 0.25);
+            }
+            50% {
+                color: #ffffff;
+                text-shadow: 0 0 6px rgba(255, 210, 130, 0.9),
+                             0 0 13px rgba(255, 180, 90, 0.55);
+            }
+        }
+
+        .footer-willysoft .footer-name {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            background: linear-gradient(
+                100deg,
+                #4a5a72 0%,
+                #6a7d96 30%,
+                #e6f0ff 50%,
+                #b8d4ff 55%,
+                #6a7d96 70%,
+                #4a5a72 100%
+            );
+            background-size: 250% 100%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-top: 8px;
+            animation: shimmerSweep 4s ease-in-out infinite;
+        }
+
+        .footer-willysoft .footer-sub {
+            font-size: 11px;
+            color: #ffab40;
+            margin-top: 3px;
+        }
+
+        .isotipo {
+            animation: scanGlow 4s ease-in-out infinite;
+            transition: transform 0.3s ease;
+        }
+
+        .isotipo:hover {
+            transform: scale(1.1);
+        }
+
+        /* Brillo barrido sobre el isotipo */
+        .isotipo-wrap {
+            position: relative;
+            display: inline-block;
+            overflow: hidden;
+            line-height: 0;
+        }
+
+        .isotipo-wrap::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -160%;
+            width: 55%;
+            height: 100%;
+            background: linear-gradient(100deg,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.55) 50%,
+                    transparent 100%);
+            transform: skewX(-18deg);
+            animation: shineSweep 4.5s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes shineSweep {
+            0%        { left: -160%; }
+            55%, 100% { left: 160%; }
+        }
+
+        /* ── Animaciones ──────────────────────────────── */
+        @keyframes scanGlow {
+            0%, 100% {
+                filter: brightness(1) drop-shadow(0 0 2px rgba(255,255,255,.15));
+            }
+            50% {
+                filter: brightness(1.2) drop-shadow(0 0 14px rgba(120,180,255,.7));
+            }
+        }
+
+        /* El brillo del isotipo "rebota" sobre el nombre:
+           el highlight del gradiente barre el texto y un drop-shadow
+           late en fase con scanGlow (pico en 50%). */
+        @keyframes shimmerSweep {
+            0% {
+                background-position: 120% 50%;
+                filter: drop-shadow(0 0 0 rgba(120,180,255,0));
+            }
+            50% {
+                background-position: 50% 50%;
+                filter: drop-shadow(0 0 6px rgba(120,180,255,.55));
+            }
+            100% {
+                background-position: -20% 50%;
+                filter: drop-shadow(0 0 0 rgba(120,180,255,0));
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .isotipo,
+            .isotipo-wrap::after,
+            .footer-willysoft .footer-name,
+            .footer-copy { animation: none; }
+            .footer-copy { color: #f0e9ff; text-shadow: 0 0 4px rgba(255, 200, 120, 0.5); }
+        }
+
+        @media (max-width: 575.98px) {
+            .page-header { flex-direction: column; align-items: flex-start; gap: 0.9rem; }
+            .page-header-actions { margin-left: 0; width: 100%; }
+            .page-header-actions .btn { width: 100%; }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ── Navbar landing (sin sesión): solo el título centrado ── -->
+<nav class="navbar navbar-willysoft landing-nav" th:if="${currentEmail == null}">
+    <div class="container">
+        <img class="app-logo" th:src="@{/img/logui.png}" alt="invenFact · Sistema de Inventario y Facturación">
+        <a class="landing-entrar" th:href="@{/login}">
+            <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
+            <span class="landing-entrar-text">Entrar</span>
+        </a>
+    </div>
+</nav>
+
+<!-- ── Navbar (con sesión) ─────────────────────────────── -->
+<nav class="navbar navbar-expand-lg navbar-willysoft" th:if="${currentEmail != null}">
+    <div class="container">
+
+        <a class="navbar-brand" th:href="@{/}">
+            <div class="brand-icon">
+                <img th:src="@{/img/logo.png}" alt="Logo">
+            </div>
+            <div class="brand-text">
+                <span class="brand-main">invenFact</span>
+                <span class="brand-sub">WillySoft</span>
+            </div>
+        </a>
+
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#nav"
+                aria-controls="nav"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="nav">
+            <ul class="navbar-nav me-auto ms-2 gap-1">
+                <li class="nav-item">
+                    <a class="nav-link nav-categorias" data-section="categorias" th:href="@{/categorias}">
+                        <i class="bi bi-tags" aria-hidden="true"></i> Categorías
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-productos" data-section="productos" th:href="@{/productos}">
+                        <i class="bi bi-box" aria-hidden="true"></i> Productos
+                    </a>
+                </li>
+                <li class="nav-item" th:if="${currentEmail != null}">
+                    <a class="nav-link nav-categorias" data-section="clientes" th:href="@{/clientes}">
+                        <i class="bi bi-person-vcard" aria-hidden="true"></i> Clientes
+                    </a>
+                </li>
+                <li class="nav-item" th:if="${currentEmail != null}">
+                    <a class="nav-link nav-productos" data-section="facturas" th:href="@{/facturas}">
+                        <i class="bi bi-receipt" aria-hidden="true"></i> Facturas
+                    </a>
+                </li>
+                <li class="nav-item" th:if="${isAdmin or isCoadmin}">
+                    <a class="nav-link nav-swagger" data-section="admin" th:href="@{/admin/dashboard}">
+                        <i class="bi bi-speedometer2" aria-hidden="true"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item" th:if="${isAdmin or isCoadmin}">
+                    <a class="nav-link nav-productos" data-section="ventas" th:href="@{/admin/ventas}">
+                        <i class="bi bi-graph-up-arrow" aria-hidden="true"></i> Ventas
+                    </a>
+                </li>
+                <li class="nav-item" th:if="${isAdmin or isCoadmin}">
+                    <a class="nav-link nav-swagger" data-section="usuarios" th:href="@{/admin/usuarios}">
+                        <i class="bi bi-people" aria-hidden="true"></i> Usuarios
+                    </a>
+                </li>
+                <li class="nav-item" th:if="${isAdmin}">
+                    <a class="nav-link nav-swagger" data-section="parametros" th:href="@{/admin/parametros}">
+                        <i class="bi bi-sliders" aria-hidden="true"></i> Parámetros
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav align-items-lg-center gap-1">
+                <li class="nav-item">
+                    <a class="nav-link nav-swagger" href="/swagger-ui.html" target="_blank">
+                        <i class="bi bi-file-code" aria-hidden="true"></i> Swagger
+                    </a>
+                </li>
+                <li class="nav-item user-nav" th:if="${currentEmail != null}">
+                    <form th:action="@{/logout}" method="post" class="m-0">
+                        <button type="submit" class="user-logout-btn"
+                                title="Cerrar sesión" aria-label="Cerrar sesión">
+                            <img th:if="${currentAvatar != null}" th:src="${currentAvatar}"
+                                 class="user-avatar" alt="" aria-hidden="true">
+                            <i th:unless="${currentAvatar != null}" class="bi bi-person-circle" aria-hidden="true"></i>
+                        </button>
+                    </form>
+                    <span class="user-chip" th:text="${currentNombre}" th:title="${currentEmail}"></span>
+                    <span class="user-rol" th:text="${currentRol}"></span>
+                </li>
+                <li class="nav-item" th:if="${currentEmail == null}">
+                    <a class="nav-link nav-swagger" th:href="@{/login}">
+                        <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i> Entrar
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</nav>
+
+<!-- ── Contenido principal ─────────────────────────────── -->
+<main class="container py-4">
+
+    <div th:if="${mensaje}"
+         class="alert alert-success alert-dismissible fade show"
+         role="alert">
+        <i class="bi bi-check-circle me-1" aria-hidden="true"></i>
+        <span th:text="${mensaje}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+
+    <div th:if="${error}"
+         class="alert alert-danger alert-dismissible fade show"
+         role="alert">
+        <i class="bi bi-exclamation-triangle me-1" aria-hidden="true"></i>
+        <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+
+    <th:block th:replace="${contenido}"></th:block>
+
+</main>
+
+<!-- ── Footer ──────────────────────────────────────────── -->
+<footer class="footer-willysoft">
+    <span class="isotipo-wrap">
+        <img th:src="@{/img/isotipo.png}"
+             alt="WillySoft"
+             height="64"
+             class="isotipo">
+    </span>
+    <span class="footer-copy">© 2026 · Willy Esko · Talento Tech</span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Active state del navbar según la URL actual -->
+<script>
+    (function () {
+        var path = window.location.pathname;
+        var best = null, bestLen = -1;
+        document.querySelectorAll('.navbar-willysoft .nav-link[data-section]').forEach(function (link) {
+            // Compara contra el href real del link (ej. /admin/ventas), no contra data-section.
+            var lp = new URL(link.href, window.location.origin).pathname;
+            if (path === lp || path.indexOf(lp + '/') === 0) {
+                // Se queda con la coincidencia más específica (la más larga).
+                if (lp.length > bestLen) { bestLen = lp.length; best = link; }
+            }
+        });
+        if (best) { best.classList.add('active'); }
+    })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es"
+      th:replace="~{layout :: document(titulo='Producto', contenido=~{::main})}">
+<body>
+<main>
+
+    <!-- Header de sección -->
+    <div class="page-header section-green">
+        <div class="page-header-icon">
+            <i class="bi bi-box" aria-hidden="true"></i>
+        </div>
+        <div class="page-header-body">
+            <div class="page-header-eyebrow"
+                 th:text="${modo == 'crear'} ? 'Crear · Producto' : 'Editar · Producto'"></div>
+            <h1 class="page-header-title"
+                th:text="${modo == 'crear'} ? 'Nuevo producto' : 'Editar producto'"></h1>
+        </div>
+        <div class="page-header-actions d-flex gap-2">
+            <a th:href="@{/productos}" class="btn btn-light">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+            <button type="submit" form="formProducto" class="btn btn-section-green">
+                <i class="bi bi-check-circle"></i>
+                <span th:text="${modo == 'crear'} ? 'Crear' : 'Guardar'"></span>
+            </button>
+        </div>
+    </div>
+
+    <div class="app-card">
+        <div class="card-body form-section section-green">
+            <form id="formProducto"
+                  th:action="${modo == 'crear'} ? @{/productos} : @{/productos/{id}(id=${id})}"
+                  th:object="${producto}" method="post">
+
+                <!-- Resumen de errores de validación -->
+                <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                    <strong><i class="bi bi-exclamation-triangle"></i> Revisá estos campos:</strong>
+                    <ul class="mb-0 mt-1">
+                        <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+                    </ul>
+                </div>
+
+                <div class="mb-3">
+                    <label for="nombre" class="form-label">
+                        Nombre <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" id="nombre" class="form-control"
+                           th:field="*{nombre}"
+                           th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid'">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('nombre')}"
+                         th:errors="*{nombre}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="descripcion" class="form-label">Descripción</label>
+                    <textarea id="descripcion" class="form-control" rows="3"
+                              th:field="*{descripcion}"
+                              th:classappend="${#fields.hasErrors('descripcion')} ? 'is-invalid'"></textarea>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('descripcion')}"
+                         th:errors="*{descripcion}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="imagenUrl" class="form-label">URL de la imagen</label>
+                    <input type="text" id="imagenUrl" class="form-control"
+                           placeholder="https://…/imagen.jpg"
+                           th:field="*{imagenUrl}"
+                           th:classappend="${#fields.hasErrors('imagenUrl')} ? 'is-invalid'">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('imagenUrl')}"
+                         th:errors="*{imagenUrl}"></div>
+                    <div class="mt-2">
+                        <img id="imagenPreview" alt="Vista previa de la imagen"
+                             class="img-thumbnail" style="max-height: 120px; display: none;">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-5 mb-3">
+                        <label for="precio" class="form-label">
+                            Precio <span class="text-danger">*</span>
+                        </label>
+                        <input type="number" id="precio" class="form-control" step="0.01" min="0"
+                               th:field="*{precio}"
+                               th:classappend="${#fields.hasErrors('precio')} ? 'is-invalid'">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('precio')}"
+                             th:errors="*{precio}"></div>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label for="moneda" class="form-label">Moneda</label>
+                        <select id="moneda" class="form-select" th:field="*{moneda}">
+                            <option th:each="m : ${monedas}" th:value="${m}" th:text="${m}"></option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label for="stock" class="form-label">
+                            Stock <span class="text-danger">*</span>
+                        </label>
+                        <input type="number" id="stock" class="form-control" min="0"
+                               th:field="*{stock}"
+                               th:classappend="${#fields.hasErrors('stock')} ? 'is-invalid'">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('stock')}"
+                             th:errors="*{stock}"></div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="categoriaId" class="form-label">
+                        Categoría <span class="text-danger">*</span>
+                    </label>
+                    <select id="categoriaId" class="form-select"
+                            th:field="*{categoriaId}"
+                            th:classappend="${#fields.hasErrors('categoriaId')} ? 'is-invalid'">
+                        <option value="">-- Seleccionar --</option>
+                        <option th:each="cat : ${categorias}"
+                                th:value="${cat.id()}"
+                                th:attr="data-icon=${cat.iconoUrl()}"
+                                th:text="${cat.nombre()}"></option>
+                    </select>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('categoriaId')}"
+                         th:errors="*{categoriaId}"></div>
+                    <small class="form-text text-muted" th:if="${#lists.isEmpty(categorias)}">
+                        No hay categorías cargadas.
+                        <a th:href="@{/categorias/nueva}">Crear una primero</a>.
+                    </small>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <a th:href="@{/productos}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-section-green btn-lg">
+                        <i class="bi bi-check-circle"></i>
+                        <span th:text="${modo == 'crear'} ? 'Crear' : 'Guardar'"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Vista previa en vivo de la URL de imagen -->
+    <script>
+        (function () {
+            var input = document.getElementById('imagenUrl');
+            var preview = document.getElementById('imagenPreview');
+            if (!input || !preview) return;
+            function update() {
+                var v = input.value.trim();
+                if (v) { preview.src = v; preview.style.display = ''; }
+                else { preview.removeAttribute('src'); preview.style.display = 'none'; }
+            }
+            input.addEventListener('input', update);
+            preview.addEventListener('error', function () { preview.style.display = 'none'; });
+            update(); // muestra la imagen ya cargada al editar
+        })();
+    </script>
+
+    <!-- Desplegable de categorías con íconos (Tom Select) -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+    <script>
+        (function () {
+            if (typeof TomSelect === 'undefined') return;
+            var sel = document.getElementById('categoriaId');
+            if (!sel) return;
+            var ICONS = {};
+            Array.prototype.forEach.call(sel.options, function (o) {
+                var u = o.getAttribute('data-icon');
+                if (u) ICONS[o.value] = u;
+            });
+            function img(data, size) {
+                var u = ICONS[data.value];
+                return u
+                    ? '<img src="' + u + '" style="width:' + size + 'px;height:' + size +
+                      'px;object-fit:contain;margin-right:8px;vertical-align:middle;" ' +
+                      'onerror="this.style.display=\'none\'">'
+                    : '';
+            }
+            new TomSelect('#categoriaId', {
+                dropdownParent: 'body',
+                render: {
+                    option: function (data, escape) {
+                        return '<div class="d-flex align-items-center">' + img(data, 22) + escape(data.text) + '</div>';
+                    },
+                    item: function (data, escape) {
+                        return '<div class="d-flex align-items-center">' + img(data, 20) + escape(data.text) + '</div>';
+                    }
+                }
+            });
+        })();
+    </script>
+
+</main>
+</body>
+</html>

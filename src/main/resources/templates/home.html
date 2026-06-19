@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es"
+      th:replace="~{layout :: document(titulo='Inicio · Productos API', contenido=~{::main})}">
+<body>
+<main>
+
+    <style>
+        /* ── Hero ─────────────────────────────────────── */
+        /* En el home, el contenido sube (menos padding del main) para que entre sin scroll */
+        body:has(.hero) main {
+            padding-top: 0.6rem !important;
+            padding-bottom: 0.6rem !important;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #4c1d95, #6d28d9);
+            border-radius: 16px;
+            padding: 0.85rem 1.75rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -80px;
+            right: -80px;
+            width: 280px;
+            height: 280px;
+            background: radial-gradient(circle, rgba(216, 200, 247, 0.18) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+
+        .hero-text { flex: 1; min-width: 0; }
+
+        /* Saludo con avatar del usuario conectado (solo desktop) */
+        .hero-user {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding: 4px 14px 4px 4px;
+            background: rgba(255, 255, 255, 0.10);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 999px;
+            color: #e9ddfb;
+            font-size: 13px;
+        }
+        .hero-user-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .hero-user .bi { font-size: 26px; color: #d8c8f7; }
+        .hero-user strong { color: #ffffff; font-weight: 600; }
+
+        .hero-eyebrow {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #cbb8f0;
+            margin-bottom: 8px;
+        }
+
+        .hero-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+
+        /* El cubo va inline, pegado a la "S" de Sistema (no como columna aparte) */
+        .hero-title i {
+            font-size: 1.4rem;
+            color: #d8c8f7;
+            margin-right: 6px;
+            vertical-align: -2px;
+        }
+
+        .hero-desc {
+            font-size: 13.5px;
+            color: #cdbdec;
+            line-height: 1.6;
+            margin: 0;
+            /* Columna del medio: entre el título y la imagen de la derecha */
+            flex: 0 1 300px;
+            max-width: 320px;
+            padding-left: 1.6rem;
+            border-left: 1px solid rgba(255, 255, 255, 0.14);
+        }
+
+        .hero-image { flex-shrink: 0; }
+
+        .hero-image img {
+            display: block;
+            width: auto;
+            max-width: 280px;
+            max-height: 124px;
+            border-radius: 14px;
+        }
+
+        /* Landing pública (sin sesión): body en columna para que el área
+           de la landing ocupe SOLO el espacio entre navbar y footer */
+        body:has(.landing-public) {
+            display: flex;
+            flex-direction: column;
+            min-height: 100dvh;
+            margin: 0;
+        }
+        body:has(.landing-public) main {
+            flex: 1 1 auto;
+            min-height: 0;                      /* permite que el hijo se achique */
+            padding: 0 !important;
+            max-width: none !important;
+            display: flex;
+            flex-direction: column;
+        }
+        body:has(.landing-public) .footer-willysoft {
+            margin-top: 0;
+        }
+        /* Fondo landing.png a cobertura total + video centrado encima */
+        .landing-public {
+            flex: 1 1 auto;
+            min-height: 0;                      /* ocupa lo que sobra, sin desbordar */
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-image: url('/img/landing.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .landing-img {                          /* el video: completo, sin recortar */
+            display: block;
+            max-width: 100%;
+            max-height: 100%;                   /* nunca más alto que su contenedor */
+            width: auto;
+            height: auto;
+            margin: 0;
+            will-change: filter;
+            animation: landingBreathe 7s ease-in-out infinite;
+        }
+
+        /* "Respiración": solo pulso de brillo, sin zoom (para no recortar) */
+        @keyframes landingBreathe {
+            0%, 100% { filter: brightness(1); }
+            50%      { filter: brightness(1.06); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .landing-img { animation: none; }
+        }
+
+        /* ── Marquesina al pie de la landing (sobre el video/fondo) ── */
+        .landing-marquee {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 2;
+            overflow: hidden;
+            white-space: nowrap;
+            padding: 14px 0;
+            background: linear-gradient(to top,
+                        rgba(8, 12, 22, 0.82),
+                        rgba(8, 12, 22, 0.45) 65%,
+                        transparent);
+            /* desvanecido suave en los bordes izq/der */
+            -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+                    mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+        }
+        .marquee-track {
+            display: inline-flex;
+            align-items: center;
+            animation: marqueeScroll 34s linear infinite;
+            will-change: transform;
+        }
+        .landing-marquee:hover .marquee-track { animation-play-state: paused; }
+        .marquee-group { display: inline-flex; align-items: center; }
+        .marquee-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0 1.6rem;
+            color: #f5f7fb;
+            font-size: 1.02rem;
+            font-weight: 500;
+            letter-spacing: 0.015em;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.65);
+        }
+        .marquee-item i { font-size: 1.05em; opacity: 0.9; }
+        .marquee-item.lead { font-weight: 700; }
+        .marquee-item.lead i { color: #6cd0ff; opacity: 1; }
+
+        @keyframes marqueeScroll {
+            from { transform: translateX(0); }
+            to   { transform: translateX(-50%); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .marquee-track { animation: none; white-space: normal; }
+        }
+        @media (max-width: 575.98px) {
+            .marquee-item { font-size: 0.9rem; padding: 0 1.1rem; }
+        }
+
+        /* ── Switch de audio del video (arriba a la derecha) ── */
+        .audio-toggle {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 3;
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(8, 12, 22, 0.45);
+            -webkit-backdrop-filter: blur(6px);
+                    backdrop-filter: blur(6px);
+        }
+        .audio-toggle .audio-icon {
+            color: #f5f7fb;
+            font-size: 1.05rem;
+            line-height: 1;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 26px;
+            cursor: pointer;
+            flex: none;
+        }
+        .switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+        .switch .slider {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.32);
+            border-radius: 999px;
+            transition: background 0.25s ease;
+        }
+        .switch .slider::before {
+            content: "";
+            position: absolute;
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            top: 3px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+            transition: transform 0.25s ease;
+        }
+        .switch input:checked + .slider { background: #2ecc71; }
+        .switch input:checked + .slider::before { transform: translateX(20px); }
+        .switch input:focus-visible + .slider { outline: 2px solid #fff; outline-offset: 2px; }
+
+        @media (max-width: 767.98px) {
+            .hero-content { flex-direction: column; text-align: center; gap: 0.6rem; }
+            .hero-title { justify-content: center; }
+            .hero-image { display: none; }
+            /* El saludo se muestra centrado junto al resto del texto */
+            .hero-user { margin-left: auto; margin-right: auto; }
+            /* La descripción vuelve debajo del título, centrada y sin divisor */
+            .hero-desc {
+                flex: none;
+                max-width: 520px;
+                margin: 0 auto;
+                padding-left: 0;
+                border-left: none;
+            }
+
+            /* Cards más cortas: el botón de acceso ocupa el lugar del stat
+               (arriba a la derecha, al lado del ícono) en vez de ir abajo */
+            .module-card { position: relative; }
+            .module-stat { display: none; }
+            .module-btn {
+                position: absolute;
+                top: 0.7rem;
+                right: 1.05rem;
+                margin-top: 0;
+                padding: 6px 11px;
+                font-size: 12.5px;
+            }
+        }
+
+        /* ── Cards de módulos ─────────────────────────── */
+        .module-card {
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid rgba(0, 0, 0, 0.07);
+            padding: 0.7rem 1.05rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            transition: box-shadow 0.18s, transform 0.18s;
+        }
+
+        .module-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .module-stat {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1d27;
+            line-height: 1;
+        }
+
+        .module-card:hover {
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.09);
+            transform: translateY(-2px);
+        }
+
+        .module-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            margin-bottom: 2px;
+            flex-shrink: 0;
+        }
+
+        .module-icon-blue   { background: #EDF4FD; color: #185FA5; }
+        .module-icon-green  { background: #EAF3DE; color: #3B6D11; }
+        .module-icon-teal   { background: #d9f2ef; color: #0f766e; }
+        .module-icon-orange { background: #fdeede; color: #b45309; }
+        .module-icon-violet { background: #ede4fc; color: #6d28d9; }
+        .module-icon-dark   { background: #ebebee; color: #3a3f52; }
+
+        .module-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1a1d27;
+            margin: 0;
+        }
+
+        .module-desc {
+            font-size: 12.5px;
+            color: #6b7280;
+            line-height: 1.45;
+            flex: 1;
+            margin: 0;
+        }
+
+        .module-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 7px 14px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            align-self: flex-start;
+            margin-top: 4px;
+            transition: opacity 0.15s, transform 0.12s;
+        }
+
+        .module-btn:hover {
+            opacity: 0.9;
+            transform: translateX(2px);
+        }
+
+        .module-btn-blue    { background: #185FA5; color: #ffffff; }
+        .module-btn-green   { background: #3B6D11; color: #ffffff; }
+        .module-btn-teal    { background: #0f766e; color: #ffffff; }
+        .module-btn-orange  { background: #b45309; color: #ffffff; }
+        .module-btn-violet  { background: #6d28d9; color: #ffffff; }
+        .module-btn-outline {
+            background: transparent;
+            color: #3a3f52;
+            border: 1px solid rgba(0, 0, 0, 0.14);
+        }
+
+        .module-btn-outline:hover {
+            background: #f0f1f4;
+            color: #1a1d27;
+            transform: none;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .module-card { transition: none; }
+            .module-btn  { transition: none; }
+        }
+    </style>
+
+    <!-- Landing pública: sin sesión, solo la imagen -->
+    <div th:if="${currentEmail == null}" class="landing-public">
+        <video class="landing-img" autoplay muted loop playsinline preload="auto"
+               th:attr="data-src-desktop=@{/img/sapo2.mp4},data-src-mobile=@{/img/sapo_mob.mp4}"
+               aria-label="invenFact · Sistema de Inventario y Facturación">
+            <source th:src="@{/img/sapo2.mp4}" type="video/mp4">
+        </video>
+
+        <!-- Selección de la fuente según el dispositivo (móvil = vertical) -->
+        <script>
+            (function () {
+                var video = document.currentScript.previousElementSibling;
+                if (!video || video.tagName !== 'VIDEO') return;
+                var mobile = video.getAttribute('data-src-mobile');
+                if (mobile && window.matchMedia('(max-width: 767.98px)').matches) {
+                    video.querySelector('source').src = mobile;
+                    video.load();
+                    video.play().catch(function () {});
+                }
+            })();
+        </script>
+
+        <!-- Switch de audio del video -->
+        <div class="audio-toggle">
+            <i class="bi bi-volume-mute-fill audio-icon" aria-hidden="true"></i>
+            <label class="switch" title="Activar/silenciar sonido del video">
+                <input type="checkbox" id="landingAudio" aria-label="Sonido del video">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <!-- Marquesina: título del sistema + características técnicas -->
+        <div class="landing-marquee">
+            <div class="marquee-track">
+                <span class="marquee-group">
+                    <span class="marquee-item lead"><i class="bi bi-box-seam"></i> Sistema de Gestión de Inventario de Productos y Facturación</span>
+                    <span class="marquee-item"><i class="bi bi-percent"></i> IVA por categoría</span>
+                    <span class="marquee-item"><i class="bi bi-currency-exchange"></i> Multimoneda ARS / USD</span>
+                    <span class="marquee-item"><i class="bi bi-person-vcard"></i> Clientes y condición frente al IVA</span>
+                    <span class="marquee-item"><i class="bi bi-snow"></i> Facturación con valores congelados</span>
+                    <span class="marquee-item"><i class="bi bi-graph-up-arrow"></i> Reportes de ventas</span>
+                    <span class="marquee-item"><i class="bi bi-braces"></i> API REST documentada con Swagger / OpenAPI</span>
+                    <span class="marquee-item"><i class="bi bi-stack"></i> Spring Boot · Thymeleaf · Bootstrap</span>
+                    <span class="marquee-item"><i class="bi bi-stars"></i> WillySoft · Talento Tech 2026</span>
+                </span>
+                <span class="marquee-group" aria-hidden="true">
+                    <span class="marquee-item lead"><i class="bi bi-box-seam"></i> Sistema de Gestión de Inventario de Productos y Facturación</span>
+                    <span class="marquee-item"><i class="bi bi-percent"></i> IVA por categoría</span>
+                    <span class="marquee-item"><i class="bi bi-currency-exchange"></i> Multimoneda ARS / USD</span>
+                    <span class="marquee-item"><i class="bi bi-person-vcard"></i> Clientes y condición frente al IVA</span>
+                    <span class="marquee-item"><i class="bi bi-snow"></i> Facturación con valores congelados</span>
+                    <span class="marquee-item"><i class="bi bi-graph-up-arrow"></i> Reportes de ventas</span>
+                    <span class="marquee-item"><i class="bi bi-braces"></i> API REST documentada con Swagger / OpenAPI</span>
+                    <span class="marquee-item"><i class="bi bi-stack"></i> Spring Boot · Thymeleaf · Bootstrap</span>
+                    <span class="marquee-item"><i class="bi bi-stars"></i> WillySoft · Talento Tech 2026</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Control del audio del video de la landing -->
+        <script>
+            (function () {
+                var video = document.querySelector('.landing-public .landing-img');
+                var input = document.getElementById('landingAudio');
+                var icon  = document.querySelector('.audio-toggle .audio-icon');
+                if (!video || !input) return;
+                input.addEventListener('change', function () {
+                    video.muted = !input.checked;
+                    if (input.checked) { video.play().catch(function () {}); }
+                    icon.className = 'bi audio-icon ' +
+                        (input.checked ? 'bi-volume-up-fill' : 'bi-volume-mute-fill');
+                });
+            })();
+        </script>
+    </div>
+
+    <!-- Panel: con sesión, hero + accesos -->
+    <div th:if="${currentEmail != null}">
+
+    <!-- Hero -->
+    <div class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <div class="hero-user">
+                    <img th:if="${currentAvatar != null}" th:src="${currentAvatar}" class="hero-user-avatar" alt="" aria-hidden="true">
+                    <i th:unless="${currentAvatar != null}" class="bi bi-person-circle" aria-hidden="true"></i>
+                    <span>Hola, <strong th:text="${currentNombre}">Usuario</strong></span>
+                </div>
+                <div class="hero-eyebrow">WillySoft · Talento Tech 2026</div>
+                <h1 class="hero-title">
+                    <i class="bi bi-box-seam" aria-hidden="true"></i>
+                    Sistema de Inventario &amp; Facturación
+                </h1>
+            </div>
+            <p class="hero-desc">
+                Catálogo con IVA por categoría y multimoneda, clientes, facturación con
+                valores congelados y reportes de ventas. También como API REST (Swagger).
+            </p>
+            <div class="hero-image">
+                <img th:src="@{/img/logotipo2.png}" alt="Sistema de Inventario y Facturación">
+            </div>
+        </div>
+    </div>
+
+    <!-- Cards de módulos (según tu rol) -->
+    <div class="row g-2">
+
+        <!-- Catálogo y ventas: todos los roles -->
+        <div class="col-sm-6 col-lg-3">
+            <div class="module-card">
+                <div class="module-top">
+                    <div class="module-icon module-icon-blue"><i class="bi bi-tags"></i></div>
+                    <span class="module-stat" th:text="${totalCategorias}">0</span>
+                </div>
+                <h2 class="module-title">Categorías</h2>
+                <p class="module-desc">Categorías del catálogo y su alícuota de IVA.</p>
+                <a th:href="@{/categorias}" class="module-btn module-btn-blue">
+                    Ir a categorías <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="module-card">
+                <div class="module-top">
+                    <div class="module-icon module-icon-green"><i class="bi bi-box"></i></div>
+                    <span class="module-stat" th:text="${totalProductos}">0</span>
+                </div>
+                <h2 class="module-title">Productos</h2>
+                <p class="module-desc">Catálogo con precios en ARS/USD y precio final con IVA.</p>
+                <a th:href="@{/productos}" class="module-btn module-btn-green">
+                    Ir a productos <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="module-card">
+                <div class="module-top">
+                    <div class="module-icon module-icon-teal"><i class="bi bi-person-vcard"></i></div>
+                    <span class="module-stat" th:text="${totalClientes}">0</span>
+                </div>
+                <h2 class="module-title">Clientes</h2>
+                <p class="module-desc">Tus clientes y su condición frente al IVA.</p>
+                <a th:href="@{/clientes}" class="module-btn module-btn-teal">
+                    Ir a clientes <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="module-card">
+                <div class="module-top">
+                    <div class="module-icon module-icon-orange"><i class="bi bi-receipt"></i></div>
+                    <span class="module-stat" th:text="${totalFacturas}">0</span>
+                </div>
+                <h2 class="module-title">Facturas</h2>
+                <p class="module-desc">Emití comprobantes (con snapshot) y consultalos.</p>
+                <a th:href="@{/facturas}" class="module-btn module-btn-orange">
+                    Ir a facturas <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Reportes y administración: ADMIN / CO-ADMIN -->
+        <div class="col-sm-6 col-lg-3" th:if="${isAdmin or isCoadmin}">
+            <div class="module-card">
+                <div class="module-top">
+                    <div class="module-icon module-icon-violet"><i class="bi bi-graph-up-arrow"></i></div>
+                </div>
+                <h2 class="module-title">Ventas</h2>
+                <p class="module-desc">KPIs, ventas por mes y rankings de productos y clientes.</p>
+                <a th:href="@{/admin/ventas}" class="module-btn module-btn-violet">
+                    Ver dashboard <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3" th:if="${isAdmin or isCoadmin}">
+            <div class="module-card">
+                <div class="module-top">
+                    <div class="module-icon module-icon-violet"><i class="bi bi-people"></i></div>
+                    <span class="module-stat" th:text="${totalUsuarios}">0</span>
+                </div>
+                <h2 class="module-title">Usuarios</h2>
+                <p class="module-desc">Altas, roles y permisos del sistema.</p>
+                <a th:href="@{/admin/usuarios}" class="module-btn module-btn-violet">
+                    Gestionar <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3" th:if="${isAdmin}">
+            <div class="module-card">
+                <div class="module-top">
+                    <div class="module-icon module-icon-dark"><i class="bi bi-sliders"></i></div>
+                    <span class="module-stat" th:if="${dolar != null}"
+                          th:text="${'$' + #numbers.formatDecimal(dolar, 1, 'COMMA', 2, 'POINT')}">$0</span>
+                </div>
+                <h2 class="module-title">Parámetros</h2>
+                <p class="module-desc">Cotización del dólar y configuración global.</p>
+                <a th:href="@{/admin/parametros}" class="module-btn module-btn-outline">
+                    Configurar <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Lista de precios (catálogo con corte por categoría) -->
+        <div class="col-sm-6 col-lg-3">
+            <div class="module-card">
+                <div class="module-top">
+                    <div class="module-icon module-icon-green"><i class="bi bi-cash-stack"></i></div>
+                </div>
+                <h2 class="module-title">Lista de precios</h2>
+                <p class="module-desc">Catálogo por categoría con el precio final en ARS y USD.</p>
+                <a th:href="@{/productos/catalogo}" class="module-btn module-btn-green">
+                    Ver lista <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    </div>
+    <!-- /Panel con sesión -->
+
+</main>
+</body>
+</html>

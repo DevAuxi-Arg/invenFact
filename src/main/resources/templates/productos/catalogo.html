@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es"
+      th:replace="~{layout :: document(titulo='Catálogo por categoría', contenido=~{::main})}">
+<body>
+<main>
+
+    <!-- Header de sección -->
+    <div class="page-header section-green">
+        <div class="page-header-icon">
+            <i class="bi bi-cash-stack" aria-hidden="true"></i>
+        </div>
+        <div class="page-header-body">
+            <div class="page-header-eyebrow">Por categoría</div>
+            <h1 class="page-header-title">Lista de precios</h1>
+        </div>
+        <div class="page-header-actions">
+            <a th:href="@{/productos}" class="btn btn-outline-section-green">
+                <i class="bi bi-list-ul"></i> Ver listado
+            </a>
+        </div>
+    </div>
+
+    <!-- Estado vacío -->
+    <div th:if="${#lists.isEmpty(grupos)}" class="app-card">
+        <div class="card-body text-center text-muted py-5">
+            <i class="bi bi-inbox" style="font-size: 1.8rem; opacity: 0.5;"></i><br>
+            No hay productos para mostrar.
+        </div>
+    </div>
+
+    <!-- Lista de precios clásica: titular por categoría + productos debajo (corte de control) -->
+    <div class="app-card" th:unless="${#lists.isEmpty(grupos)}">
+        <div class="card-body">
+
+            <div th:each="grupo : ${grupos}" class="mb-4">
+
+                <!-- Titular de la categoría -->
+                <div class="d-flex align-items-center gap-2 mb-2 pb-2"
+                     style="border-bottom: 2px solid #3B6D11;">
+                    <img th:if="${grupo.categoria().iconoUrl() != null and !grupo.categoria().iconoUrl().isEmpty()}"
+                         th:src="${grupo.categoria().iconoUrl()}" alt=""
+                         style="width:34px;height:34px;object-fit:contain;flex:none;"
+                         onerror="this.style.display='none'">
+                    <h2 class="h4 mb-0 fw-bold" th:text="${grupo.categoria().nombre()}">Categoría</h2>
+                    <span class="badge-cat ms-2"
+                          th:text="${'IVA ' + (grupo.categoria().alicuotaIva() != null ? #numbers.formatDecimal(grupo.categoria().alicuotaIva(), 1, 2) : '0,00') + ' %'}"></span>
+                </div>
+
+                <!-- Productos de la categoría -->
+                <div class="table-responsive">
+                    <table class="table table-hover app-table mb-0">
+                        <thead>
+                        <tr>
+                            <th style="width: 56px"></th>
+                            <th>Producto</th>
+                            <th class="text-end" style="width: 170px">Precio final (ARS)</th>
+                            <th class="text-end" style="width: 170px">Precio final (USD)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="p : ${grupo.productos()}">
+                            <td>
+                                <img th:if="${p.imagenUrl() != null and !p.imagenUrl().isEmpty()}"
+                                     th:src="${p.imagenUrl()}" alt=""
+                                     style="width:42px;height:42px;object-fit:cover;border-radius:6px;"
+                                     onerror="this.style.display='none'">
+                            </td>
+                            <td>
+                                <strong th:text="${p.nombre()}"></strong>
+                                <div class="small text-muted" th:text="${p.descripcion()}"></div>
+                            </td>
+                            <td class="text-end fw-semibold"
+                                th:text="${'$' + #numbers.formatDecimal(p.precioFinalArs(), 1, 'COMMA', 2, 'POINT')}"></td>
+                            <td class="text-end text-muted"
+                                th:text="${p.precioFinalUsd() != null ? 'US$' + #numbers.formatDecimal(p.precioFinalUsd(), 1, 'COMMA', 2, 'POINT') : ''}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Total general -->
+    <div th:unless="${#lists.isEmpty(grupos)}" class="text-end text-muted small mt-2">
+        <span th:text="${#lists.size(grupos)}"></span> categorías ·
+        <span th:text="${totalProductos}"></span> productos en total
+    </div>
+
+</main>
+</body>
+</html>

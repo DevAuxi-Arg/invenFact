@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es"
+      th:replace="~{layout :: document(titulo='Nueva factura', contenido=~{::main})}">
+<body>
+<main>
+
+    <div class="page-header section-green">
+        <div class="page-header-icon"><i class="bi bi-receipt"></i></div>
+        <div class="page-header-body">
+            <div class="page-header-eyebrow">Ventas</div>
+            <h1 class="page-header-title">Nueva factura</h1>
+        </div>
+    </div>
+
+    <form th:action="@{/facturas}" method="post">
+        <!-- Datos del cliente -->
+        <div class="app-card mb-3">
+            <div class="card-body form-section section-green">
+                <h2 class="h6 mb-3"><i class="bi bi-person-vcard me-1"></i> Cliente</h2>
+
+                <!-- Opción A: cliente existente -->
+                <div class="mb-3">
+                    <label for="clienteId" class="form-label">Cliente existente</label>
+                    <select id="clienteId" name="clienteId" class="form-select">
+                        <option value="">— Cargar uno nuevo abajo —</option>
+                        <option th:each="c : ${clientes}" th:value="${c.id()}"
+                                th:text="${c.nombre() + (c.documento() != null ? ' · ' + c.documento() : '') + (c.condicionIva() != null ? ' · ' + #strings.replace(c.condicionIva(), '_', ' ') : '')}"></option>
+                    </select>
+                </div>
+
+                <!-- Opción B: nuevo cliente -->
+                <fieldset id="nuevoCliente" class="border rounded p-3 mb-3" style="border-color:#e3e6ec !important;">
+                    <legend class="float-none w-auto px-2 text-muted" style="font-size:13px;">Nuevo cliente</legend>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="clienteNombre" class="form-label">Nombre / Razón social</label>
+                            <input type="text" id="clienteNombre" name="clienteNombre" class="form-control">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="clienteDocumento" class="form-label">Documento / CUIT</label>
+                            <input type="text" id="clienteDocumento" name="clienteDocumento" class="form-control">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="condicionIva" class="form-label">Condición IVA</label>
+                            <select id="condicionIva" name="condicionIva" class="form-select">
+                                <option th:each="c : ${condiciones}" th:value="${c}"
+                                        th:text="${#strings.replace(c, '_', ' ')}"></option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="registrarCliente"
+                                       name="registrarCliente" value="true">
+                                <label class="form-check-label" for="registrarCliente">
+                                    Registrar este cliente en la base
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div>
+                    <label for="observaciones" class="form-label">Observaciones</label>
+                    <input type="text" id="observaciones" name="observaciones" class="form-control">
+                </div>
+            </div>
+        </div>
+
+        <!-- Líneas -->
+        <div class="app-card mb-3">
+            <div class="card-body form-section section-green">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h2 class="h6 mb-0"><i class="bi bi-list-ul me-1"></i> Productos</h2>
+                    <button type="button" class="btn btn-sm btn-outline-section-green" id="btnAgregar">
+                        <i class="bi bi-plus-circle"></i> Agregar línea
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table app-table mb-0" id="tablaLineas">
+                        <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th style="width: 140px">Cantidad</th>
+                            <th style="width: 60px"></th>
+                        </tr>
+                        </thead>
+                        <tbody id="lineasBody">
+                        <!-- las filas se agregan por JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <small class="text-muted">El precio final se calcula al emitir, con el dólar y el IVA vigentes.</small>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <a th:href="@{/facturas}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Cancelar
+            </a>
+            <button type="submit" class="btn btn-section-green">
+                <i class="bi bi-check-circle"></i> Emitir factura
+            </button>
+        </div>
+    </form>
+
+    <!-- Plantilla de fila -->
+    <template id="filaTemplate">
+        <tr>
+            <td>
+                <select name="productoId" class="form-select form-select-sm" required>
+                    <option value="">-- Seleccionar producto --</option>
+                    <option th:each="p : ${productos}" th:value="${p.id()}"
+                            th:text="${p.nombre() + ' · ' + p.moneda() + ' ' + #numbers.formatDecimal(p.precio(), 1, 2) + ' · stock ' + p.stock()}"></option>
+                </select>
+            </td>
+            <td>
+                <input type="number" name="cantidad" class="form-control form-control-sm" min="1" value="1" required>
+            </td>
+            <td class="text-end">
+                <button type="button" class="btn btn-sm btn-outline-danger btnQuitar" title="Quitar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </td>
+        </tr>
+    </template>
+
+    <script>
+        (function () {
+            const body = document.getElementById('lineasBody');
+            const tpl = document.getElementById('filaTemplate');
+
+            function agregarFila() {
+                body.appendChild(tpl.content.cloneNode(true));
+            }
+
+            document.getElementById('btnAgregar').addEventListener('click', agregarFila);
+
+            body.addEventListener('click', function (e) {
+                const btn = e.target.closest('.btnQuitar');
+                if (btn) {
+                    btn.closest('tr').remove();
+                }
+            });
+
+            // Empieza con una línea
+            agregarFila();
+
+            // Si se elige un cliente existente, se desactivan los campos de "nuevo cliente".
+            const clienteSel = document.getElementById('clienteId');
+            const nuevo = document.getElementById('nuevoCliente');
+            function toggleNuevo() { nuevo.disabled = !!clienteSel.value; }
+            clienteSel.addEventListener('change', toggleNuevo);
+            toggleNuevo();
+        })();
+    </script>
+
+</main>
+</body>
+</html>

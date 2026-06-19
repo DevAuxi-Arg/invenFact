@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es"
+      th:replace="~{layout :: document(titulo='Usuarios', contenido=~{::main})}">
+<body>
+<main>
+
+    <style>
+        .role-badge { font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 6px; }
+        .role-ADMIN      { background: #fde2e2; color: #a51b1b; }
+        .role-COADMIN    { background: #e0ecfd; color: #185FA5; }
+        .role-BACKOFFICE { background: #EAF3DE; color: #3B6D11; }
+        .estado-on  { color: #3B6D11; font-weight: 600; }
+        .estado-off { color: #a51b1b; font-weight: 600; }
+        .user-thumb {
+            width: 38px; height: 38px; border-radius: 50%;
+            object-fit: cover; flex: none; border: 1px solid #e3e6ec;
+        }
+        .user-thumb-fallback {
+            width: 38px; height: 38px; border-radius: 50%; flex: none;
+            background: #e9ecf3; color: #8a93a5;
+            display: inline-flex; align-items: center; justify-content: center;
+        }
+    </style>
+
+    <!-- Header -->
+    <div class="page-header section-blue">
+        <div class="page-header-icon"><i class="bi bi-people"></i></div>
+        <div class="page-header-body">
+            <div class="page-header-eyebrow">Administración</div>
+            <h1 class="page-header-title">Usuarios</h1>
+        </div>
+        <div class="page-header-actions">
+            <a th:href="@{/admin/usuarios/nuevo}" class="btn btn-section-blue">
+                <i class="bi bi-person-plus"></i> Nuevo usuario
+            </a>
+        </div>
+    </div>
+
+    <!-- Buscador -->
+    <div class="app-card mb-3">
+        <div class="card-body form-section">
+            <form th:action="@{/admin/usuarios}" method="get">
+                <div class="row g-2">
+                    <div class="col-md-10">
+                        <input type="text" name="texto" class="form-control"
+                               placeholder="Buscar por nombre o email…" th:value="${texto}">
+                    </div>
+                    <div class="col-md-2 d-grid">
+                        <button type="submit" class="btn btn-outline-section-blue">
+                            <i class="bi bi-search"></i> Buscar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="app-card">
+        <div class="table-responsive">
+            <table class="table table-hover app-table">
+                <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th style="width: 200px">Rol</th>
+                    <th style="width: 120px">Estado</th>
+                    <th style="width: 150px">Último acceso</th>
+                    <th style="width: 130px" class="text-end">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(usuarios)}">
+                    <td colspan="5" class="text-center text-muted py-4">
+                        <i class="bi bi-inbox" style="font-size: 1.6rem; opacity: 0.5;"></i><br>
+                        No hay usuarios para mostrar.
+                    </td>
+                </tr>
+                <tr th:each="u : ${usuarios}">
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <img th:if="${u.avatarUrl()}" th:src="${u.avatarUrl()}" alt="" class="user-thumb">
+                            <span th:unless="${u.avatarUrl()}" class="user-thumb-fallback">
+                                <i class="bi bi-person"></i>
+                            </span>
+                            <span>
+                                <strong th:text="${u.nombre()}"></strong><br>
+                                <span class="text-muted" style="font-size:12px" th:text="${u.email()}"></span>
+                            </span>
+                        </div>
+                    </td>
+                    <td>
+                        <!-- Cambio de rol en línea (solo ADMIN) -->
+                        <form th:if="${isAdmin}" th:action="@{/admin/usuarios/{id}/rol(id=${u.id()})}"
+                              method="post" class="d-flex gap-1">
+                            <select name="rol" class="form-select form-select-sm">
+                                <option th:each="r : ${roles}" th:value="${r}" th:text="${r}"
+                                        th:selected="${r == u.rol()}"></option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-outline-section-blue" title="Cambiar rol">
+                                <i class="bi bi-check2"></i>
+                            </button>
+                        </form>
+                        <span th:unless="${isAdmin}" class="role-badge"
+                              th:classappend="'role-' + ${u.rol()}" th:text="${u.rol()}"></span>
+                    </td>
+                    <td>
+                        <span th:if="${u.bloqueado()}" class="estado-off">
+                            <i class="bi bi-lock-fill"></i> Bloqueado
+                        </span>
+                        <span th:unless="${u.bloqueado()}"
+                              th:classappend="${u.activo()} ? 'estado-on' : 'estado-off'"
+                              th:text="${u.activo()} ? 'Activo' : 'Inactivo'"></span>
+                    </td>
+                    <td class="text-muted" style="font-size:12.5px"
+                        th:text="${u.ultimoAcceso() != null} ? ${#temporals.format(u.ultimoAcceso(), 'dd/MM/yyyy HH:mm')} : '—'"></td>
+                    <td class="text-end">
+                        <a th:href="@{/admin/usuarios/{id}/editar(id=${u.id()})}"
+                           class="btn btn-sm btn-outline-section-blue" title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <form th:if="${isAdmin}" th:action="@{/admin/usuarios/{id}/eliminar(id=${u.id()})}"
+                              method="post" class="d-inline"
+                              onsubmit="return confirm('¿Eliminar este usuario?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div th:with="qs=${(texto != null and !#strings.isEmpty(texto)) ? 'texto=' + texto + '&size=' + page.size + '&' : 'size=' + page.size + '&'},
+                  urlBase='/admin/usuarios?' + qs">
+        <div th:replace="~{fragments/paginacion :: paginacion(page=${page}, urlBase=${urlBase}, variante='blue')}"></div>
+    </div>
+
+</main>
+</body>
+</html>

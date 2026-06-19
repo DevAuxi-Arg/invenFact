@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es"
+      th:replace="~{layout :: document(titulo='Factura', contenido=~{::main})}">
+<body>
+<main>
+
+    <style>
+        .estado-EMITIDA { background:#EAF3DE; color:#3B6D11; }
+        .estado-ANULADA { background:#fde2e2; color:#a51b1b; }
+        .estado-badge { font-size:12px; font-weight:600; padding:5px 11px; border-radius:6px; }
+        .factura-meta { font-size:13px; color:#4a5468; }
+        .factura-meta strong { color:#1a1d27; }
+        @media print {
+            .navbar-willysoft, .footer-willysoft, .no-print { display:none !important; }
+            .app-card { box-shadow:none !important; border:1px solid #ccc; }
+        }
+    </style>
+
+    <div class="d-flex justify-content-between align-items-center mb-3 no-print">
+        <a th:href="@{/facturas}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-section-green btn-sm" onclick="window.print()">
+                <i class="bi bi-printer"></i> Imprimir
+            </button>
+            <form th:if="${(isAdmin or isCoadmin) and factura.estado().name() == 'EMITIDA'}"
+                  th:action="@{/facturas/{id}/anular(id=${factura.id()})}" method="post"
+                  onsubmit="return confirm('¿Anular esta factura? Se devolverá el stock.');">
+                <button type="submit" class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-x-circle"></i> Anular
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="app-card">
+        <div class="card-body">
+            <!-- Encabezado -->
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <div>
+                    <h1 class="h4 mb-1">Factura <span th:text="${factura.numero()}"></span></h1>
+                    <div class="factura-meta">
+                        <span th:text="${#temporals.format(factura.fecha(), 'dd/MM/yyyy HH:mm')}"></span>
+                    </div>
+                </div>
+                <span class="estado-badge" th:classappend="'estado-' + ${factura.estado()}"
+                      th:text="${factura.estado()}"></span>
+            </div>
+
+            <!-- Cliente -->
+            <div class="row mb-4 factura-meta">
+                <div class="col-md-6">
+                    <div>Cliente: <strong th:text="${factura.clienteNombre()}"></strong></div>
+                    <div th:if="${factura.clienteDocumento()}">
+                        Documento: <strong th:text="${factura.clienteDocumento()}"></strong>
+                    </div>
+                    <div th:if="${factura.condicionIvaCliente()}">
+                        Condición IVA: <strong th:text="${#strings.replace(factura.condicionIvaCliente(), '_', ' ')}"></strong>
+                        <span th:if="${factura.condicionIvaCliente().name() == 'EXENTO'}"
+                              class="badge bg-warning text-dark ms-1">sin IVA</span>
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div>Tipo de cambio aplicado:
+                        <strong th:text="${'$' + #numbers.formatDecimal(factura.tipoCambioAplicado(), 1, 'COMMA', 2, 'POINT')}"></strong>
+                    </div>
+                    <div>Emitida por: <strong th:text="${factura.creadoPor()}"></strong></div>
+                </div>
+            </div>
+
+            <!-- Líneas -->
+            <div class="table-responsive">
+                <table class="table app-table">
+                    <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th class="text-end">P. unitario</th>
+                        <th class="text-end">Cant.</th>
+                        <th class="text-end">IVA</th>
+                        <th class="text-end">Neto (ARS)</th>
+                        <th class="text-end">IVA (ARS)</th>
+                        <th class="text-end">Total (ARS)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="l : ${factura.lineas()}">
+                        <td th:text="${l.nombreProducto()}"></td>
+                        <td class="text-end">
+                            <span class="text-muted small" th:text="${l.monedaOriginal()}"></span>
+                            <span th:text="${#numbers.formatDecimal(l.precioUnitarioOriginal(), 1, 'COMMA', 2, 'POINT')}"></span>
+                        </td>
+                        <td class="text-end" th:text="${l.cantidad()}"></td>
+                        <td class="text-end" th:text="${#numbers.formatDecimal(l.alicuotaIva(), 1, 2) + '%'}"></td>
+                        <td class="text-end" th:text="${#numbers.formatDecimal(l.netoArs(), 1, 'COMMA', 2, 'POINT')}"></td>
+                        <td class="text-end" th:text="${#numbers.formatDecimal(l.ivaMontoArs(), 1, 'COMMA', 2, 'POINT')}"></td>
+                        <td class="text-end fw-semibold" th:text="${#numbers.formatDecimal(l.totalArs(), 1, 'COMMA', 2, 'POINT')}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Totales -->
+            <div class="d-flex justify-content-end mt-3">
+                <table style="min-width: 280px;">
+                    <tr>
+                        <td class="text-muted py-1">Subtotal neto</td>
+                        <td class="text-end py-1" th:text="${'$' + #numbers.formatDecimal(factura.subtotalNeto(), 1, 'COMMA', 2, 'POINT')}"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted py-1">IVA</td>
+                        <td class="text-end py-1" th:text="${'$' + #numbers.formatDecimal(factura.totalIva(), 1, 'COMMA', 2, 'POINT')}"></td>
+                    </tr>
+                    <tr style="border-top:2px solid #e3e6ec;">
+                        <td class="fw-bold py-2">TOTAL</td>
+                        <td class="text-end fw-bold py-2" style="font-size:1.15rem;"
+                            th:text="${'$' + #numbers.formatDecimal(factura.total(), 1, 'COMMA', 2, 'POINT')}"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <p th:if="${factura.observaciones()}" class="factura-meta mt-3">
+                <i class="bi bi-chat-left-text"></i> <span th:text="${factura.observaciones()}"></span>
+            </p>
+        </div>
+    </div>
+
+</main>
+</body>
+</html>

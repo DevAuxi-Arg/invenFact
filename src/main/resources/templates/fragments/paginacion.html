@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<body>
+
+<!--
+  Fragmento de paginación reutilizable.
+  Parámetros:
+    page     → org.springframework.data.domain.Page
+    urlBase  → URL base CON query string ya armada y terminada en '&' o '?', ej: '/categorias?nombre=Bebidas&'
+               Para ver la primera página: ${urlBase} + 'page=0'
+    variante → 'blue' (categorías) | 'green' (productos). Opcional, default 'blue'.
+-->
+<div th:fragment="paginacion(page, urlBase, variante)"
+     th:if="${page != null and page.totalPages > 0}"
+     class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3 px-1">
+
+    <small class="text-muted">
+        Página <strong th:text="${page.number + 1}"></strong>
+        de <strong th:text="${page.totalPages}"></strong>
+        · <span th:text="${page.totalElements}"></span> resultados
+    </small>
+
+    <nav th:if="${page.totalPages > 1}"
+         th:with="varClass=${variante == 'green' ? 'app-pagination section-green' : 'app-pagination'}">
+        <ul class="pagination pagination-sm mb-0" th:classappend="${varClass}">
+            <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{|${urlBase}page=${page.number - 1}|}"
+                   aria-label="Anterior">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                th:if="${i >= page.number - 2 and i <= page.number + 2}"
+                th:classappend="${i == page.number} ? 'active'">
+                <a class="page-link"
+                   th:href="@{|${urlBase}page=${i}|}"
+                   th:text="${i + 1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{|${urlBase}page=${page.number + 1}|}"
+                   aria-label="Siguiente">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+</body>
+</html>

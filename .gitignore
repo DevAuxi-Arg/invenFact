@@ -1,0 +1,70 @@
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### Claude Code ###
+.claude/
+.claude-code/
+CLAUDE.md
+CLAUDE.local.md
+.anthropic/
+.cursor/
+.aider*
+.continue/
+.codeium/
+
+### Logs ###
+*.log
+logs/
+
+### Environment ###
+.env
+.env.*
+!.env.example
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### Eclipse ###
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### OS ###
+.DS_Store
+Thumbs.db
+desktop.ini
+
+### Asset pesado sin uso (no subir a GitHub; queda en disco para comprimir aparte) ###
+src/main/resources/static/img/sapo2.gif

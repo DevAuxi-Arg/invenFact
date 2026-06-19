@@ -1,0 +1,17 @@
+erDiagram
+    CATEGORIAS {
+        int id PK "id (PK)"
+        string nombre "nombre (unique)"
+        string descripcion
+    }
+
+    PRODUCTOS {
+        int id PK "id (PK)"
+        string nombre
+        string descripcion
+        decimal precio
+        int stock
+        int categoria_id FK
+    }
+
+    CATEGORIAS ||--o{ PRODUCTOS : "tiene"

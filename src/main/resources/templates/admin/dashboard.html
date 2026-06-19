@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es"
+      th:replace="~{layout :: document(titulo='Dashboard · Admin', contenido=~{::main})}">
+<body>
+<main>
+
+    <style>
+        .kpi-card {
+            background: #fff; border-radius: 14px; border: 1px solid rgba(0,0,0,0.07);
+            padding: 1.25rem 1.4rem; display: flex; align-items: center; gap: 1rem; height: 100%;
+        }
+        .kpi-icon {
+            width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-size: 22px;
+        }
+        .kpi-blue  { background: #EDF4FD; color: #185FA5; }
+        .kpi-green { background: #EAF3DE; color: #3B6D11; }
+        .kpi-dark  { background: #ebebee; color: #3a3f52; }
+        .kpi-amber { background: #fdf3e0; color: #a96a12; }
+        .kpi-value { font-size: 1.6rem; font-weight: 700; color: #1a1d27; line-height: 1; }
+        .kpi-label { font-size: 12.5px; color: #6b7280; margin-top: 4px; }
+        .role-badge { font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 6px; }
+        .role-ADMIN      { background: #fde2e2; color: #a51b1b; }
+        .role-COADMIN    { background: #e0ecfd; color: #185FA5; }
+        .role-BACKOFFICE { background: #EAF3DE; color: #3B6D11; }
+    </style>
+
+    <!-- Header -->
+    <div class="page-header section-blue">
+        <div class="page-header-icon"><i class="bi bi-speedometer2"></i></div>
+        <div class="page-header-body">
+            <div class="page-header-eyebrow">Panel de administración</div>
+            <h1 class="page-header-title">Dashboard</h1>
+        </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="row g-3 mb-3">
+        <div class="col-6 col-lg-3">
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-green"><i class="bi bi-box"></i></div>
+                <div>
+                    <div class="kpi-value" th:text="${totalProductos}">0</div>
+                    <div class="kpi-label">Productos</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-blue"><i class="bi bi-tags"></i></div>
+                <div>
+                    <div class="kpi-value" th:text="${totalCategorias}">0</div>
+                    <div class="kpi-label">Categorías</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-dark"><i class="bi bi-people"></i></div>
+                <div>
+                    <div class="kpi-value" th:text="${totalUsuarios}">0</div>
+                    <div class="kpi-label">Usuarios</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-amber"><i class="bi bi-person-check"></i></div>
+                <div>
+                    <div class="kpi-value" th:text="${usuariosActivos}">0</div>
+                    <div class="kpi-label">Usuarios activos</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <!-- Gráfico -->
+        <div class="col-lg-7">
+            <div class="app-card h-100">
+                <div class="card-body">
+                    <h2 class="h6 mb-3"><i class="bi bi-bar-chart me-1"></i> Productos por categoría</h2>
+                    <canvas id="chartProductos" height="140"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Últimos usuarios -->
+        <div class="col-lg-5">
+            <div class="app-card h-100">
+                <div class="card-body">
+                    <h2 class="h6 mb-3"><i class="bi bi-person-plus me-1"></i> Últimos usuarios</h2>
+                    <div class="table-responsive">
+                        <table class="table app-table mb-0">
+                            <tbody>
+                            <tr th:if="${#lists.isEmpty(ultimosUsuarios)}">
+                                <td class="text-muted text-center py-3">Sin usuarios todavía.</td>
+                            </tr>
+                            <tr th:each="u : ${ultimosUsuarios}">
+                                <td>
+                                    <strong th:text="${u.nombre()}"></strong><br>
+                                    <span class="text-muted" style="font-size:12px" th:text="${u.email()}"></span>
+                                </td>
+                                <td class="text-end">
+                                    <span class="role-badge"
+                                          th:classappend="'role-' + ${u.rol()}"
+                                          th:text="${u.rol()}"></span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auditoría -->
+    <div class="app-card mt-3">
+        <div class="card-body">
+            <h2 class="h6 mb-3"><i class="bi bi-clock-history me-1"></i> Actividad reciente</h2>
+            <div class="table-responsive">
+                <table class="table app-table mb-0">
+                    <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Acción</th>
+                        <th>Detalle</th>
+                        <th>Usuario</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(auditoria)}">
+                        <td colspan="4" class="text-muted text-center py-3">Sin actividad registrada.</td>
+                    </tr>
+                    <tr th:each="a : ${auditoria}">
+                        <td class="text-muted" style="font-size:12.5px"
+                            th:text="${#temporals.format(a.fecha, 'dd/MM HH:mm')}"></td>
+                        <td><span class="badge-cat" th:text="${a.accion}"></span></td>
+                        <td th:text="${a.detalle}"></td>
+                        <td class="text-muted" th:text="${a.usuario}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const labels = /*[[${chartLabels}]]*/ [];
+        const data = /*[[${chartData}]]*/ [];
+        /*]]>*/
+        new Chart(document.getElementById('chartProductos'), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Productos',
+                    data: data,
+                    backgroundColor: '#378ADD',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+            }
+        });
+    </script>
+
+</main>
+</body>
+</html>
