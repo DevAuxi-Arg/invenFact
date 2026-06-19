@@ -12,8 +12,9 @@ import org.springframework.stereotype.Service;
  * si corresponde, convirtiendo de USD a ARS con el dólar vigente.
  *
  * <p>Reglas: la moneda base es ARS; todos los montos en pesos se redondean a 2
- * decimales con {@link RoundingMode#HALF_UP}. El precio en USD se deriva del precio
- * final en ARS dividiendo por el dólar vigente.</p>
+ * decimales con {@link RoundingMode#HALF_UP}. Solo los productos cargados en USD
+ * llevan precio en dólares (se deriva del final en ARS dividiendo por el dólar
+ * vigente); los productos en pesos dejan el precio en USD en {@code null}.</p>
  */
 @Service
 @RequiredArgsConstructor
@@ -47,9 +48,10 @@ public class PriceCalculationService {
         BigDecimal ivaMontoArs = netoArs.multiply(alicuota)
                 .divide(CIEN, ESCALA, RoundingMode.HALF_UP);
 
-        // 3) Precio final en ARS y su equivalente en USD
+        // 3) Precio final en ARS. El precio en USD solo se muestra si el producto
+        //    fue cargado en dólares (los productos en pesos no llevan precio en USD).
         BigDecimal precioFinalArs = netoArs.add(ivaMontoArs);
-        BigDecimal precioFinalUsd = (dolar.signum() > 0)
+        BigDecimal precioFinalUsd = (moneda == Moneda.USD && dolar.signum() > 0)
                 ? precioFinalArs.divide(dolar, ESCALA, RoundingMode.HALF_UP)
                 : null;
 

@@ -18,6 +18,8 @@ import com.willysoft.productosapi.product.dto.PriceBreakdown;
 import com.willysoft.productosapi.security.SecurityUtils;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -50,8 +52,15 @@ public class FacturaService {
      * Emite una factura. Congela el precio, el tipo de cambio y el IVA de cada línea
      * (snapshot) y descuenta el stock de los productos vendidos.
      */
+    /** Largo máximo de observaciones (debe coincidir con la columna de la entidad Factura). */
+    private static final int MAX_OBSERVACIONES = 500;
+
     @Transactional
     public FacturaResponse create(FacturaCreateRequest request) {
+        if (request.observaciones() != null && request.observaciones().length() > MAX_OBSERVACIONES) {
+            throw new ConflictException("Las observaciones no pueden superar los " + MAX_OBSERVACIONES
+                    + " caracteres (tenés " + request.observaciones().length() + ").");
+        }
         BigDecimal dolar = parametroService.getDolar();
         ClienteResuelto cliente = resolverCliente(request);
         boolean exento = cliente.condicion() == CondicionIva.EXENTO;
@@ -75,14 +84,26 @@ public class FacturaService {
         BigDecimal totalIva = BigDecimal.ZERO;
         BigDecimal total = BigDecimal.ZERO;
 
+        // Validación previa: junta TODOS los faltantes de stock para informarlos juntos
+        // (así el mensaje coincide con las líneas que se resaltan en rojo en el form).
+        List<String> faltantes = new ArrayList<>();
         for (LineaFacturaRequest l : request.lineas()) {
             Product producto = productRepository.findById(l.productoId())
                     .orElseThrow(() -> new ResourceNotFoundException(
                             "Producto no encontrado con id: " + l.productoId()));
             if (producto.getStock() < l.cantidad()) {
-                throw new ConflictException("Stock insuficiente para " + producto.getNombre()
+                faltantes.add(producto.getNombre()
                         + " (disponible: " + producto.getStock() + ", pedido: " + l.cantidad() + ")");
             }
+        }
+        if (!faltantes.isEmpty()) {
+            throw new ConflictException("Stock insuficiente para " + String.join("; ", faltantes));
+        }
+
+        for (LineaFacturaRequest l : request.lineas()) {
+            Product producto = productRepository.findById(l.productoId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Producto no encontrado con id: " + l.productoId()));
 
             // Cálculo por unidad con el dólar de la emisión, luego × cantidad.
             // Si el cliente es exento, la venta no se grava (IVA = 0).

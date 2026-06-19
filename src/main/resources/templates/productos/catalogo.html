@@ -13,10 +13,46 @@
             <div class="page-header-eyebrow">Por categoría</div>
             <h1 class="page-header-title">Lista de precios</h1>
         </div>
-        <div class="page-header-actions">
-            <a th:href="@{/productos}" class="btn btn-outline-section-green">
-                <i class="bi bi-list-ul"></i> Ver listado
+        <div class="page-header-actions d-flex flex-wrap gap-2">
+            <a th:href="@{/productos/catalogo/export/excel(categoriaIds=${categoriaIds})}"
+               class="btn btn-outline-section-green">
+                <i class="bi bi-file-earmark-excel"></i> Excel
             </a>
+            <a th:href="@{/productos/catalogo/export/pdf(categoriaIds=${categoriaIds})}"
+               class="btn btn-outline-section-green">
+                <i class="bi bi-file-earmark-pdf"></i> PDF
+            </a>
+            <a th:href="@{/productos}" class="btn btn-outline-section-green">
+                <i class="bi bi-list-ul"></i> Ver catálogo
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtro de categorías (una o varias) -->
+    <div class="app-card mb-3">
+        <div class="card-body form-section section-green">
+            <form th:action="@{/productos/catalogo}" method="get">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-9">
+                        <label for="filtroCategorias" class="form-label">Categorías (vacío = todas)</label>
+                        <select id="filtroCategorias" name="categoriaIds" multiple class="form-select">
+                            <option th:each="cat : ${categorias}"
+                                    th:value="${cat.id()}"
+                                    th:attr="data-icon=${cat.iconoUrl()}"
+                                    th:text="${cat.nombre()}"
+                                    th:selected="${categoriaIds != null and categoriaIds.contains(cat.id())}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-grid gap-2">
+                        <button type="submit" class="btn btn-section-green">
+                            <i class="bi bi-funnel"></i> Filtrar
+                        </button>
+                        <a th:href="@{/productos/catalogo}" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-x-circle"></i> Limpiar
+                        </a>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -87,6 +123,40 @@
         <span th:text="${#lists.size(grupos)}"></span> categorías ·
         <span th:text="${totalProductos}"></span> productos en total
     </div>
+
+    <!-- Multi-select de categorías con íconos (Tom Select) -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+    <script>
+        (function () {
+            if (typeof TomSelect === 'undefined') return;
+            var sel = document.getElementById('filtroCategorias');
+            if (!sel) return;
+            var ICONS = {};
+            Array.prototype.forEach.call(sel.options, function (o) {
+                var u = o.getAttribute('data-icon');
+                if (u) ICONS[o.value] = u;
+            });
+            function img(data) {
+                var u = ICONS[data.value];
+                return u
+                    ? '<img src="' + u + '" style="width:20px;height:20px;object-fit:contain;margin-right:8px;vertical-align:middle;" onerror="this.style.display=\'none\'">'
+                    : '';
+            }
+            new TomSelect('#filtroCategorias', {
+                plugins: ['remove_button'],
+                dropdownParent: 'body',
+                render: {
+                    option: function (data, escape) {
+                        return '<div class="d-flex align-items-center">' + img(data) + escape(data.text) + '</div>';
+                    },
+                    item: function (data, escape) {
+                        return '<div class="d-flex align-items-center">' + img(data) + escape(data.text) + '</div>';
+                    }
+                }
+            });
+        })();
+    </script>
 
 </main>
 </body>

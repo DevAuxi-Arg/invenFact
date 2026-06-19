@@ -225,7 +225,17 @@
             font-weight: 700;
             color: var(--c-on-dark);
             white-space: nowrap;
+            /* Efecto 3D: extrusión en navy oscuro + sombra suave debajo. */
+            text-shadow:
+                1px 1px 0 #0b1530,
+                2px 2px 0 rgba(11, 21, 48, 0.75),
+                3px 3px 5px rgba(0, 0, 0, 0.45);
         }
+
+        /* Tom Select: la flechita/área del combo con cursor de dedo;
+           solo el campo de escritura mantiene el cursor de texto. */
+        .ts-wrapper .ts-control { cursor: pointer; }
+        .ts-wrapper .ts-control > input { cursor: text; }
 
         /* ── Título grande de la landing (sin sesión) ─── */
         .landing-nav .container {
@@ -453,6 +463,23 @@
             border: 1px solid var(--c-green);
         }
         .btn-outline-section-green:hover { background: var(--c-green); color: #fff; }
+
+        /* Dentro de la banda oscura (page-header) los outline van en blanco,
+           si no quedan verde/azul sobre violeta y casi no se ven. */
+        .page-header .btn-outline-section-blue,
+        .page-header .btn-outline-section-green {
+            background: rgba(255, 255, 255, 0.14);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+        .page-header .btn-outline-section-blue:hover,
+        .page-header .btn-outline-section-blue:focus {
+            background: #fff; color: var(--c-blue); border-color: #fff;
+        }
+        .page-header .btn-outline-section-green:hover,
+        .page-header .btn-outline-section-green:focus {
+            background: #fff; color: var(--c-green); border-color: #fff;
+        }
 
         /* ── Cards y tablas ───────────────────────────── */
         .app-card {

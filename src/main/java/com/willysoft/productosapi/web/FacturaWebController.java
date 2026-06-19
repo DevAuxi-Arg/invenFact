@@ -11,6 +11,7 @@ import com.willysoft.productosapi.product.ProductService;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -80,7 +81,8 @@ public class FacturaWebController {
         }
         if (lineas.isEmpty()) {
             model.addAttribute("error", "Agregá al menos un producto con cantidad válida.");
-            cargarOpciones(model);
+            reponerFormulario(model, clienteId, clienteNombre, clienteDocumento, condicionIva,
+                    registrarCliente, observaciones, lineas);
             return "facturas/form";
         }
         try {
@@ -91,14 +93,49 @@ public class FacturaWebController {
             return "redirect:/facturas/" + creada.id();
         } catch (ConflictException | ResourceNotFoundException e) {
             model.addAttribute("error", e.getMessage());
-            cargarOpciones(model);
+            reponerFormulario(model, clienteId, clienteNombre, clienteDocumento, condicionIva,
+                    registrarCliente, observaciones, lineas);
+            return "facturas/form";
+        } catch (DataIntegrityViolationException e) {
+            model.addAttribute("error", "No se pudo emitir la factura: revisá los datos cargados "
+                    + "(algún campo supera el largo permitido o está duplicado).");
+            reponerFormulario(model, clienteId, clienteNombre, clienteDocumento, condicionIva,
+                    registrarCliente, observaciones, lineas);
             return "facturas/form";
         }
     }
 
-    private void cargarOpciones(Model model) {
+    /** Reenvía al form las opciones y los datos ya cargados, para no perderlos ante un error. */
+    private void reponerFormulario(Model model, Long clienteId, String clienteNombre,
+                                   String clienteDocumento, CondicionIva condicionIva,
+                                   boolean registrarCliente, String observaciones,
+                                   List<LineaFacturaRequest> lineas) {
+        model.addAttribute("clienteId", clienteId);
+        model.addAttribute("clienteNombre", clienteNombre);
+        model.addAttribute("clienteDocumento", clienteDocumento);
+        model.addAttribute("condicionIva", condicionIva);
+        model.addAttribute("registrarCliente", registrarCliente);
+        model.addAttribute("observaciones", observaciones);
+        model.addAttribute("lineas", lineas);
+        model.addAttribute("productosConError", productosConStockInsuficiente(lineas));
         model.addAttribute("productos", productService.search(null, null, Pageable.unpaged()).getContent());
         model.addAttribute("clientes", clienteService.findAll());
+    }
+
+    /** Ids de productos cuya cantidad pedida supera el stock disponible (para resaltarlos). */
+    private List<Long> productosConStockInsuficiente(List<LineaFacturaRequest> lineas) {
+        List<Long> ids = new ArrayList<>();
+        for (LineaFacturaRequest l : lineas) {
+            try {
+                var p = productService.findById(l.productoId());
+                if (p.stock() < l.cantidad()) {
+                    ids.add(l.productoId());
+                }
+            } catch (ResourceNotFoundException ignored) {
+                // El producto ya no existe: no se resalta acá, el mensaje lo informa.
+            }
+        }
+        return ids;
     }
 
     @GetMapping("/{id}")

@@ -4,6 +4,21 @@
 <body>
 <main>
 
+    <!-- Librerías: Tom Select (combo de productos) y SweetAlert2 (modal de error) -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        /* Línea con problema de stock: queda rodeada en rojo. */
+        #lineasBody tr.linea-error td {
+            background-color: #fdecea;
+            border-top: 2px solid #dc3545;
+            border-bottom: 2px solid #dc3545;
+        }
+        #lineasBody tr.linea-error td:first-child { border-left: 2px solid #dc3545; }
+        #lineasBody tr.linea-error td:last-child  { border-right: 2px solid #dc3545; }
+    </style>
+
     <div class="page-header section-green">
         <div class="page-header-icon"><i class="bi bi-receipt"></i></div>
         <div class="page-header-body">
@@ -24,6 +39,7 @@
                     <select id="clienteId" name="clienteId" class="form-select">
                         <option value="">— Cargar uno nuevo abajo —</option>
                         <option th:each="c : ${clientes}" th:value="${c.id()}"
+                                th:selected="${clienteId != null and clienteId == c.id()}"
                                 th:text="${c.nombre() + (c.documento() != null ? ' · ' + c.documento() : '') + (c.condicionIva() != null ? ' · ' + #strings.replace(c.condicionIva(), '_', ' ') : '')}"></option>
                     </select>
                 </div>
@@ -34,23 +50,27 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="clienteNombre" class="form-label">Nombre / Razón social</label>
-                            <input type="text" id="clienteNombre" name="clienteNombre" class="form-control">
+                            <input type="text" id="clienteNombre" name="clienteNombre" class="form-control"
+                                   th:value="${clienteNombre}">
                         </div>
                         <div class="col-md-3">
                             <label for="clienteDocumento" class="form-label">Documento / CUIT</label>
-                            <input type="text" id="clienteDocumento" name="clienteDocumento" class="form-control">
+                            <input type="text" id="clienteDocumento" name="clienteDocumento" class="form-control"
+                                   th:value="${clienteDocumento}">
                         </div>
                         <div class="col-md-3">
                             <label for="condicionIva" class="form-label">Condición IVA</label>
                             <select id="condicionIva" name="condicionIva" class="form-select">
                                 <option th:each="c : ${condiciones}" th:value="${c}"
+                                        th:selected="${condicionIva != null and condicionIva == c}"
                                         th:text="${#strings.replace(c, '_', ' ')}"></option>
                             </select>
                         </div>
                         <div class="col-12">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="registrarCliente"
-                                       name="registrarCliente" value="true">
+                                       name="registrarCliente" value="true"
+                                       th:checked="${registrarCliente}">
                                 <label class="form-check-label" for="registrarCliente">
                                     Registrar este cliente en la base
                                 </label>
@@ -61,7 +81,8 @@
 
                 <div>
                     <label for="observaciones" class="form-label">Observaciones</label>
-                    <input type="text" id="observaciones" name="observaciones" class="form-control">
+                    <input type="text" id="observaciones" name="observaciones" class="form-control"
+                           maxlength="500" th:value="${observaciones}">
                 </div>
             </div>
         </div>
@@ -85,7 +106,28 @@
                         </tr>
                         </thead>
                         <tbody id="lineasBody">
-                        <!-- las filas se agregan por JS -->
+                        <!-- Filas ya cargadas (se re-renderizan si vuelve por un error) -->
+                        <tr th:each="linea : ${lineas}"
+                            th:classappend="${productosConError != null and productosConError.contains(linea.productoId())} ? 'linea-error' : ''">
+                            <td>
+                                <select name="productoId" class="form-select form-select-sm" required>
+                                    <option value="">-- Seleccionar producto --</option>
+                                    <option th:each="p : ${productos}" th:value="${p.id()}"
+                                            th:selected="${p.id() == linea.productoId()}"
+                                            th:attr="data-stock=${p.stock()},data-meta=${p.moneda() + ' ' + #numbers.formatDecimal(p.precio(), 1, 2)}"
+                                            th:text="${p.nombre()}"></option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="number" name="cantidad" class="form-control form-control-sm" min="1"
+                                       th:value="${linea.cantidad()}" required>
+                            </td>
+                            <td class="text-end">
+                                <button type="button" class="btn btn-sm btn-outline-danger btnQuitar" title="Quitar">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -110,7 +152,8 @@
                 <select name="productoId" class="form-select form-select-sm" required>
                     <option value="">-- Seleccionar producto --</option>
                     <option th:each="p : ${productos}" th:value="${p.id()}"
-                            th:text="${p.nombre() + ' · ' + p.moneda() + ' ' + #numbers.formatDecimal(p.precio(), 1, 2) + ' · stock ' + p.stock()}"></option>
+                            th:attr="data-stock=${p.stock()},data-meta=${p.moneda() + ' ' + #numbers.formatDecimal(p.precio(), 1, 2)}"
+                            th:text="${p.nombre()}"></option>
                 </select>
             </td>
             <td>
@@ -129,8 +172,41 @@
             const body = document.getElementById('lineasBody');
             const tpl = document.getElementById('filaTemplate');
 
+            // Mapa de productos (nombre / meta / stock) leído del template de fila.
+            const PROD = {};
+            Array.prototype.forEach.call(tpl.content.querySelectorAll('option'), function (o) {
+                if (!o.value) return;
+                PROD[o.value] = {
+                    nombre: o.textContent,
+                    meta: o.getAttribute('data-meta') || '',
+                    stock: parseInt(o.getAttribute('data-stock') || '0', 10)
+                };
+            });
+
+            // Render de cada opción: nombre + meta, y el stock en azul (rojo si es 0).
+            function render(data, escape) {
+                const p = PROD[data.value];
+                if (!p) return '<div>' + escape(data.text) + '</div>';
+                const cls = p.stock <= 0 ? 'text-danger fw-bold' : 'text-primary';
+                return '<div class="d-flex justify-content-between align-items-center gap-2">'
+                     + '<span>' + escape(p.nombre)
+                     + ' <span class="text-muted small">· ' + escape(p.meta) + '</span></span>'
+                     + '<span class="' + cls + ' small">stock ' + p.stock + '</span>'
+                     + '</div>';
+            }
+
+            function initSelect(sel) {
+                if (typeof TomSelect === 'undefined' || sel.tomselect) return;
+                new TomSelect(sel, {
+                    dropdownParent: 'body',
+                    render: { option: render, item: render }
+                });
+            }
+
             function agregarFila() {
                 body.appendChild(tpl.content.cloneNode(true));
+                const sel = body.querySelector('tr:last-child select[name="productoId"]');
+                if (sel) initSelect(sel);
             }
 
             document.getElementById('btnAgregar').addEventListener('click', agregarFila);
@@ -138,12 +214,19 @@
             body.addEventListener('click', function (e) {
                 const btn = e.target.closest('.btnQuitar');
                 if (btn) {
+                    const ts = btn.closest('tr').querySelector('select[name="productoId"]');
+                    if (ts && ts.tomselect) ts.tomselect.destroy();
                     btn.closest('tr').remove();
                 }
             });
 
-            // Empieza con una línea
-            agregarFila();
+            // Inicializa Tom Select en las filas ya renderizadas por el servidor.
+            Array.prototype.forEach.call(body.querySelectorAll('select[name="productoId"]'), initSelect);
+
+            // Empieza con una línea solo si no hay filas ya cargadas (re-render por error)
+            if (!body.querySelector('tr')) {
+                agregarFila();
+            }
 
             // Si se elige un cliente existente, se desactivan los campos de "nuevo cliente".
             const clienteSel = document.getElementById('clienteId');
@@ -152,6 +235,23 @@
             clienteSel.addEventListener('change', toggleNuevo);
             toggleNuevo();
         })();
+    </script>
+
+    <!-- Modal de error: aparece el sapo informando el problema -->
+    <script th:if="${error}" th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                title: 'No se pudo emitir la factura',
+                text: /*[[${error}]]*/ 'Error',
+                imageUrl: /*[[@{/img/toad.png}]]*/ '',
+                imageWidth: 130,
+                imageAlt: 'invenFact',
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#3B6D11',
+                heightAuto: false,
+                scrollbarPadding: false
+            });
+        });
     </script>
 
 </main>

@@ -15,7 +15,7 @@
         </div>
         <div class="page-header-actions">
             <a th:href="@{/productos/catalogo}" class="btn btn-outline-section-green">
-                <i class="bi bi-grid-1x2"></i> Catálogo por categoría
+                <i class="bi bi-grid-1x2"></i> Ver Lista de Precios
             </a>
             <a th:href="@{/productos/nuevo}" class="btn btn-section-green">
                 <i class="bi bi-plus-circle"></i> Nuevo producto
@@ -57,15 +57,63 @@
     <div class="app-card">
         <div class="table-responsive">
             <table class="table table-hover app-table">
-                <thead>
+                <thead th:with="sortRaw=${param.sort != null ? param.sort[0] : 'nombre,asc'},
+                                sortParts=${#strings.arraySplit(sortRaw, ',')},
+                                sortField=${sortParts[0]},
+                                sortDir=${sortParts.length > 1 ? sortParts[1] : 'asc'},
+                                qs=(${nombre != null and !#strings.isEmpty(nombre)} ? 'nombre=' + ${nombre} + '&' : '')
+                                   + (${categoriaId != null} ? 'categoriaId=' + ${categoriaId} + '&' : '')
+                                   + 'size=' + ${page.size}">
                 <tr>
                     <th style="width: 70px">ID</th>
-                    <th>Nombre</th>
-                    <th>Categoría</th>
-                    <th class="text-end">Precio base</th>
-                    <th class="text-end">Final (ARS)</th>
-                    <th class="text-end">Final (USD)</th>
-                    <th class="text-end">Stock</th>
+                    <th th:with="dir=${sortField == 'nombre' and sortDir == 'asc' ? 'desc' : 'asc'}">
+                        <a class="text-reset text-decoration-none"
+                           th:href="@{'/productos?' + ${qs} + '&sort=nombre,' + ${dir}}">
+                            Nombre
+                            <i class="bi ms-1"
+                               th:classappend="${sortField != 'nombre' ? 'bi-arrow-down-up opacity-50' : (sortDir == 'asc' ? 'bi-caret-up-fill' : 'bi-caret-down-fill')}"></i>
+                        </a>
+                    </th>
+                    <th th:with="dir=${sortField == 'categoria.nombre' and sortDir == 'asc' ? 'desc' : 'asc'}">
+                        <a class="text-reset text-decoration-none"
+                           th:href="@{'/productos?' + ${qs} + '&sort=categoria.nombre,' + ${dir}}">
+                            Categoría
+                            <i class="bi ms-1"
+                               th:classappend="${sortField != 'categoria.nombre' ? 'bi-arrow-down-up opacity-50' : (sortDir == 'asc' ? 'bi-caret-up-fill' : 'bi-caret-down-fill')}"></i>
+                        </a>
+                    </th>
+                    <th class="text-end" th:with="dir=${sortField == 'precio' and sortDir == 'asc' ? 'desc' : 'asc'}">
+                        <a class="text-reset text-decoration-none"
+                           th:href="@{'/productos?' + ${qs} + '&sort=precio,' + ${dir}}">
+                            Precio base
+                            <i class="bi ms-1"
+                               th:classappend="${sortField != 'precio' ? 'bi-arrow-down-up opacity-50' : (sortDir == 'asc' ? 'bi-caret-up-fill' : 'bi-caret-down-fill')}"></i>
+                        </a>
+                    </th>
+                    <th class="text-end" th:with="dir=${sortField == 'precioFinalArs' and sortDir == 'asc' ? 'desc' : 'asc'}">
+                        <a class="text-reset text-decoration-none"
+                           th:href="@{'/productos?' + ${qs} + '&sort=precioFinalArs,' + ${dir}}">
+                            Final (ARS)
+                            <i class="bi ms-1"
+                               th:classappend="${sortField != 'precioFinalArs' ? 'bi-arrow-down-up opacity-50' : (sortDir == 'asc' ? 'bi-caret-up-fill' : 'bi-caret-down-fill')}"></i>
+                        </a>
+                    </th>
+                    <th class="text-end" th:with="dir=${sortField == 'precioFinalUsd' and sortDir == 'asc' ? 'desc' : 'asc'}">
+                        <a class="text-reset text-decoration-none"
+                           th:href="@{'/productos?' + ${qs} + '&sort=precioFinalUsd,' + ${dir}}">
+                            Final (USD)
+                            <i class="bi ms-1"
+                               th:classappend="${sortField != 'precioFinalUsd' ? 'bi-arrow-down-up opacity-50' : (sortDir == 'asc' ? 'bi-caret-up-fill' : 'bi-caret-down-fill')}"></i>
+                        </a>
+                    </th>
+                    <th class="text-end" th:with="dir=${sortField == 'stock' and sortDir == 'asc' ? 'desc' : 'asc'}">
+                        <a class="text-reset text-decoration-none"
+                           th:href="@{'/productos?' + ${qs} + '&sort=stock,' + ${dir}}">
+                            Stock
+                            <i class="bi ms-1"
+                               th:classappend="${sortField != 'stock' ? 'bi-arrow-down-up opacity-50' : (sortDir == 'asc' ? 'bi-caret-up-fill' : 'bi-caret-down-fill')}"></i>
+                        </a>
+                    </th>
                     <th style="width: 120px" class="text-end">Acciones</th>
                 </tr>
                 </thead>
@@ -111,7 +159,22 @@
                         th:text="${'$' + #numbers.formatDecimal(p.precioFinalArs(), 1, 'COMMA', 2, 'POINT')}"></td>
                     <td class="text-end text-muted"
                         th:text="${p.precioFinalUsd() != null ? 'US$' + #numbers.formatDecimal(p.precioFinalUsd(), 1, 'COMMA', 2, 'POINT') : '—'}"></td>
-                    <td class="text-end" th:text="${p.stock()}"></td>
+                    <td class="text-end">
+                        <div class="stock-control d-inline-flex align-items-center gap-1"
+                             th:attr="data-id=${p.id()},data-nombre=${p.nombre()}">
+                            <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1 stk-menos"
+                                    title="Quitar 1">−</button>
+                            <input type="number" min="0"
+                                   class="form-control form-control-sm text-center px-1 stk-input"
+                                   style="width:62px" th:value="${p.stock()}">
+                            <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1 stk-mas"
+                                    title="Sumar 1">+</button>
+                            <button type="button" class="btn btn-sm btn-outline-section-green py-0 px-1 btn-ajustar"
+                                    title="Ajustar stock (cantidad o valor exacto)">
+                                <i class="bi bi-sliders"></i>
+                            </button>
+                        </div>
+                    </td>
                     <td class="text-end">
                         <a th:href="@{/productos/{id}/editar(id=${p.id()})}"
                            class="btn btn-sm btn-outline-section-green"
@@ -135,10 +198,177 @@
 
     <div th:with="qs=(${nombre != null and !#strings.isEmpty(nombre)} ? 'nombre=' + ${nombre} + '&' : '')
                      + (${categoriaId != null} ? 'categoriaId=' + ${categoriaId} + '&' : '')
+                     + (${param.sort != null} ? 'sort=' + ${param.sort[0]} + '&' : '')
                      + 'size=' + ${page.size} + '&',
                   urlBase='/productos?' + ${qs}">
         <div th:replace="~{fragments/paginacion :: paginacion(page=${page}, urlBase=${urlBase}, variante='green')}"></div>
     </div>
+
+    <!-- Modal de ajuste de stock (compartido por todas las filas) -->
+    <div class="modal fade" id="modalStock" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="formStock" method="post" th:data-base="@{/productos}">
+                    <!-- Token CSRF: este form arma el action por JS, así que Thymeleaf no lo inyecta solo. -->
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <div class="modal-header">
+                        <h2 class="h6 modal-title"><i class="bi bi-sliders me-1"></i> Ajustar stock</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="mb-1">Producto: <strong id="stkNombre"></strong></p>
+                        <p class="mb-3 text-muted">Stock actual: <strong id="stkActual">0</strong></p>
+                        <div class="mb-3">
+                            <label for="stkModo" class="form-label">Operación</label>
+                            <select id="stkModo" name="modo" class="form-select">
+                                <option value="sumar">Sumar al stock actual</option>
+                                <option value="restar">Restar del stock actual</option>
+                                <option value="fijar">Fijar valor exacto</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="stkValor" id="stkLabel" class="form-label">Cantidad a sumar</label>
+                            <input type="number" id="stkValor" name="valor" class="form-control" min="0" value="1" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-section-green">
+                            <i class="bi bi-check-circle"></i> Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- SweetAlert2 para los avisos del sapo -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script th:inline="javascript">
+        // En DOMContentLoaded ya cargó el bundle de Bootstrap del layout.
+        document.addEventListener('DOMContentLoaded', function () {
+            const modalEl = document.getElementById('modalStock');
+            if (!modalEl) return;
+            const form  = document.getElementById('formStock');
+            const base  = form.getAttribute('data-base');
+            const modo  = document.getElementById('stkModo');
+            const label = document.getElementById('stkLabel');
+            const valor = document.getElementById('stkValor');
+            const modal = (typeof bootstrap !== 'undefined') ? bootstrap.Modal.getOrCreateInstance(modalEl) : null;
+            const SAPO  = /*[[@{/img/toad.png}]]*/ '';
+
+            const LABELS = { sumar: 'Cantidad a sumar', restar: 'Cantidad a restar', fijar: 'Nuevo stock total' };
+
+            function showToast(msg) {
+                if (typeof Swal === 'undefined') return;
+                Swal.fire({ toast: true, position: 'top-end', title: msg, imageUrl: SAPO,
+                    imageWidth: 46, imageAlt: 'invenFact', showConfirmButton: false,
+                    timer: 3500, timerProgressBar: true });
+            }
+            function showError(msg) {
+                if (typeof Swal === 'undefined') { alert(msg); return; }
+                // heightAuto/scrollbarPadding en false: el modal no corre la pantalla.
+                Swal.fire({ title: 'No se pudo ajustar el stock', text: msg, imageUrl: SAPO,
+                    imageWidth: 130, imageAlt: 'invenFact', confirmButtonText: 'Entendido',
+                    confirmButtonColor: '#3B6D11', heightAuto: false, scrollbarPadding: false });
+            }
+
+            // POST AJAX al endpoint de stock (lleva el token CSRF del form).
+            function postStock(id, op, val) {
+                const csrf = form.querySelector('input[type=hidden]');
+                const body = new URLSearchParams();
+                body.append('modo', op);
+                body.append('valor', val);
+                if (csrf && csrf.name) body.append(csrf.name, csrf.value);
+                return fetch(base + '/' + id + '/stock', {
+                    method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' }, body: body
+                }).then(function (res) { return res.json().then(function (d) { return { ok: res.ok, data: d }; }); });
+            }
+
+            function pintarMenos(control) {
+                const input = control.querySelector('.stk-input');
+                const v = parseInt(input.value, 10) || 0;
+                control.querySelector('.stk-menos').disabled = v <= 0;
+                input.classList.toggle('text-danger', v <= 0);
+                input.classList.toggle('fw-bold', v <= 0);
+            }
+
+            function aplicar(control, r) {
+                const input = control.querySelector('.stk-input');
+                if (r.ok && r.data.ok) {
+                    input.value = r.data.stock;
+                    input.dataset.orig = r.data.stock;
+                    pintarMenos(control);
+                    showToast(r.data.mensaje);
+                } else {
+                    input.value = input.dataset.orig;   // revierte
+                    pintarMenos(control);
+                    showError((r.data && r.data.mensaje) || 'No se pudo ajustar el stock.');
+                }
+            }
+
+            // Confirma el cambio (una sola vez) cuando el foco sale del control.
+            function commit(control) {
+                const input = control.querySelector('.stk-input');
+                const orig = parseInt(input.dataset.orig, 10);
+                let nuevo = parseInt(input.value, 10);
+                if (isNaN(nuevo) || nuevo < 0) { input.value = orig; pintarMenos(control); return; }
+                if (nuevo === orig) return;
+                postStock(control.dataset.id, 'fijar', nuevo).then(function (r) { aplicar(control, r); });
+            }
+
+            document.querySelectorAll('.stock-control').forEach(function (control) {
+                const input = control.querySelector('.stk-input');
+                input.dataset.orig = input.value;
+                pintarMenos(control);
+
+                control.querySelector('.stk-mas').addEventListener('click', function () {
+                    input.value = (parseInt(input.value, 10) || 0) + 1;
+                    pintarMenos(control);
+                    input.focus();
+                });
+                control.querySelector('.stk-menos').addEventListener('click', function () {
+                    let v = (parseInt(input.value, 10) || 0) - 1;
+                    if (v < 0) v = 0;
+                    input.value = v;
+                    pintarMenos(control);
+                    input.focus();
+                });
+                input.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+                });
+                // Foco fuera del control => terminaste con este producto => guarda.
+                control.addEventListener('focusout', function (e) {
+                    if (control.contains(e.relatedTarget)) return;   // sigue adentro
+                    commit(control);
+                });
+            });
+
+            // ── Modal (cantidad o valor exacto) ──
+            modo.addEventListener('change', function () { label.textContent = LABELS[modo.value] || 'Valor'; });
+
+            let target = null;
+            document.querySelectorAll('.btn-ajustar').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    target = btn.closest('.stock-control');
+                    document.getElementById('stkNombre').textContent = target.dataset.nombre;
+                    document.getElementById('stkActual').textContent = target.querySelector('.stk-input').dataset.orig;
+                    modo.value = 'sumar';
+                    label.textContent = LABELS.sumar;
+                    valor.value = 1;
+                    if (modal) modal.show();
+                });
+            });
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                if (!target) return;
+                postStock(target.dataset.id, modo.value, parseInt(valor.value, 10) || 0).then(function (r) {
+                    if (modal) modal.hide();
+                    aplicar(target, r);
+                });
+            });
+        });
+    </script>
 
     <!-- Filtro de categorías con íconos (Tom Select) -->
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
