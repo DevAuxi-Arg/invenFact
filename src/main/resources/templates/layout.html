@@ -276,6 +276,11 @@
             width: auto;
         }
 
+        /* En mobile el logo izquierdo se oculta (queda solo el título centrado) */
+        @media (max-width: 767.98px) {
+            .landing-logo { display: none; }
+        }
+
         .landing-entrar {
             position: absolute;
             right: 12px;
@@ -702,6 +707,7 @@
 <!-- ── Navbar landing (sin sesión): solo el título centrado ── -->
 <nav class="navbar navbar-willysoft landing-nav" th:if="${currentEmail == null}">
     <div class="container">
+        <img class="landing-logo" th:src="@{/img/logotipo.png}" alt="invenFact">
         <img class="app-logo" th:src="@{/img/logui.png}" alt="invenFact · Sistema de Inventario y Facturación">
         <a class="landing-entrar" th:href="@{/login}">
             <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
