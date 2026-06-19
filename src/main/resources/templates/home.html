@@ -168,6 +168,26 @@
             .landing-img { animation: none; }
         }
 
+        /* ── Mobile: el video llena el espacio entre header y footer (sin scroll)
+              y se quita el fondo landing.png (el video ya tapa todo) ── */
+        @media (max-width: 991.98px) {
+            body:has(.landing-public) { height: 100dvh; overflow: hidden; }
+            body:has(.landing-public) > main { overflow: hidden; }
+            .landing-public {
+                background-image: none;            /* no se carga landing.png en mobile */
+                height: calc(100dvh - 156px);      /* 100dvh - (header ~78 + footer ~78) */
+                flex: none;
+            }
+            /* El video LLENA todo el hueco (recorta el sobrante mínimo según el celular) */
+            .landing-img {
+                width: 100%;
+                height: 100%;
+                max-width: none;
+                max-height: none;
+                object-fit: cover;
+            }
+        }
+
         /* ── Marquesina al pie de la landing (sobre el video/fondo) ── */
         .landing-marquee {
             position: absolute;
