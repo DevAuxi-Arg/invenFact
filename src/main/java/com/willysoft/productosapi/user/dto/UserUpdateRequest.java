@@ -23,10 +23,14 @@ public record UserUpdateRequest(
         Boolean activo,
 
         @Size(max = 512, message = "La URL de la imagen no puede exceder 512 caracteres")
-        String avatarUrl
+        String avatarUrl,
+
+        @Email(message = "El email de recuperación no es válido")
+        @Size(max = 150, message = "El email de recuperación no puede exceder 150 caracteres")
+        String emailRecuperacion
 ) {
     /** Compatibilidad: actualización sin tocar la imagen. */
     public UserUpdateRequest(String nombre, String email, Boolean activo) {
-        this(nombre, email, activo, null);
+        this(nombre, email, activo, null, null);
     }
 }

@@ -35,6 +35,15 @@
                 </div>
 
                 <div class="mb-3">
+                    <label for="emailRecuperacion" class="form-label">Email de recuperación</label>
+                    <input type="email" id="emailRecuperacion" class="form-control" th:field="*{emailRecuperacion}"
+                           placeholder="correo-real@gmail.com"
+                           th:classappend="${#fields.hasErrors('emailRecuperacion')} ? 'is-invalid'">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('emailRecuperacion')}" th:errors="*{emailRecuperacion}"></div>
+                    <div class="form-text">Opcional. A esta dirección se envía el enlace para restablecer la contraseña. Si se deja vacío, se usa el email de arriba.</div>
+                </div>
+
+                <div class="mb-3">
                     <label for="avatarUrl" class="form-label">Imagen (URL)</label>
                     <div class="d-flex align-items-center gap-3">
                         <img id="avatarPreview" th:src="*{avatarUrl}" alt="Avatar"

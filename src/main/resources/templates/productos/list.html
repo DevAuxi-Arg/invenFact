@@ -4,6 +4,21 @@
 <body>
 <main>
 
+    <style>
+        /* En mobile: nombre y descripción se recortan con "…" para filas parejas.
+           La descripción completa se ve al entrar a editar. */
+        @media (max-width: 767.98px) {
+            .prod-info { min-width: 0; max-width: 52vw; }
+            .prod-name,
+            .prod-desc {
+                display: block;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+    </style>
+
     <!-- Header de sección -->
     <div class="page-header section-green">
         <div class="page-header-icon">
@@ -132,9 +147,9 @@
                                  th:src="${p.imagenUrl()}" alt=""
                                  style="width:40px;height:40px;object-fit:cover;border-radius:6px;flex:none;"
                                  onerror="this.style.display='none'">
-                            <div>
-                                <strong th:text="${p.nombre()}"></strong>
-                                <div class="small text-muted" th:text="${p.descripcion()}"></div>
+                            <div class="prod-info">
+                                <strong class="prod-name" th:text="${p.nombre()}"></strong>
+                                <div class="small text-muted prod-desc" th:text="${p.descripcion()}"></div>
                             </div>
                         </div>
                     </td>

@@ -90,7 +90,8 @@ public class UserWebController {
     public String editForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
             var u = userService.findById(id);
-            model.addAttribute("usuario", new UserUpdateRequest(u.nombre(), u.email(), u.activo(), u.avatarUrl()));
+            model.addAttribute("usuario",
+                    new UserUpdateRequest(u.nombre(), u.email(), u.activo(), u.avatarUrl(), u.emailRecuperacion()));
             model.addAttribute("id", id);
             model.addAttribute("rolActual", u.rol());
             model.addAttribute("roles", List.of(Role.values()));

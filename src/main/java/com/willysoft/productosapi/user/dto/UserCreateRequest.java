@@ -24,10 +24,14 @@ public record UserCreateRequest(
         Role rol,
 
         @Size(max = 512, message = "La URL de la imagen no puede exceder 512 caracteres")
-        String avatarUrl
+        String avatarUrl,
+
+        @Email(message = "El email de recuperación no es válido")
+        @Size(max = 150, message = "El email de recuperación no puede exceder 150 caracteres")
+        String emailRecuperacion
 ) {
     /** Compatibilidad: alta sin imagen. */
     public UserCreateRequest(String nombre, String email, String password, Role rol) {
-        this(nombre, email, password, rol, null);
+        this(nombre, email, password, rol, null, null);
     }
 }

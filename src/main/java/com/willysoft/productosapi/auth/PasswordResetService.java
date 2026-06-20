@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -54,7 +55,11 @@ public class PasswordResetService {
 
                     — Productos API · WillySoft""".formatted(user.getNombre(), expirationMinutes, link);
 
-            emailService.send(user.getEmail(), "Restablecer tu contraseña", body);
+            // Se envía al email de recuperación si está definido; si no, al email de login.
+            String destino = StringUtils.hasText(user.getEmailRecuperacion())
+                    ? user.getEmailRecuperacion().trim()
+                    : user.getEmail();
+            emailService.send(destino, "Restablecer tu contraseña", body);
         });
     }
 

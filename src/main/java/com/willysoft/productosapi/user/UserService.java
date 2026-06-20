@@ -59,6 +59,7 @@ public class UserService {
                 .password(passwordEncoder.encode(request.password()))
                 .rol(request.rol())
                 .avatarUrl(normalizeUrl(request.avatarUrl()))
+                .emailRecuperacion(normalizeUrl(request.emailRecuperacion()))
                 .activo(true)
                 .bloqueado(false)
                 .creadoPor(SecurityUtils.currentEmail())
@@ -80,6 +81,7 @@ public class UserService {
         user.setNombre(request.nombre());
         user.setEmail(request.email());
         user.setAvatarUrl(normalizeUrl(request.avatarUrl()));
+        user.setEmailRecuperacion(normalizeUrl(request.emailRecuperacion()));
         user.setActivo(request.activo());
         User saved = userRepository.save(user);
         if (!request.activo()) {
@@ -202,6 +204,7 @@ public class UserService {
                 user.getEmail(),
                 user.getRol(),
                 user.getAvatarUrl(),
+                user.getEmailRecuperacion(),
                 user.isActivo(),
                 user.isBloqueado(),
                 user.getUltimoAcceso(),

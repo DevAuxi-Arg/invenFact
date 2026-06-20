@@ -9,6 +9,7 @@ public record UserResponse(
         String email,
         Role rol,
         String avatarUrl,
+        String emailRecuperacion,
         boolean activo,
         boolean bloqueado,
         LocalDateTime ultimoAcceso,

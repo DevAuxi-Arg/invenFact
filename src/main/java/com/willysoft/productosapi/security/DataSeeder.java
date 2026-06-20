@@ -41,6 +41,9 @@ public class DataSeeder implements CommandLineRunner {
     @Value("${app.seed.admin.password:Admin123!}")
     private String adminPassword;
 
+    @Value("${app.seed.admin.recovery-email:}")
+    private String adminRecoveryEmail;
+
     @Override
     public void run(String... args) {
         seedParametros();
@@ -72,6 +75,8 @@ public class DataSeeder implements CommandLineRunner {
                 .email(adminEmail)
                 .password(passwordEncoder.encode(adminPassword))
                 .rol(Role.ADMIN)
+                .emailRecuperacion(adminRecoveryEmail != null && !adminRecoveryEmail.isBlank()
+                        ? adminRecoveryEmail.trim() : null)
                 .activo(true)
                 .bloqueado(false)
                 .creadoPor("seeder")

@@ -45,6 +45,11 @@ public class User {
     @Column(length = 512)
     private String avatarUrl;
 
+    /** Email alternativo para recibir el enlace de recuperación de contraseña (opcional).
+        Si está vacío, se usa el email de login. */
+    @Column(length = 150)
+    private String emailRecuperacion;
+
     @Builder.Default
     @Column(nullable = false)
     private boolean activo = true;
