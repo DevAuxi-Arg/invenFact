@@ -37,7 +37,7 @@
 
     <div class="app-card">
         <div class="table-responsive">
-            <table class="table table-hover app-table">
+            <table class="table table-hover app-table cards-md">
                 <thead>
                 <tr>
                     <th>Nombre</th>
@@ -55,18 +55,18 @@
                     </td>
                 </tr>
                 <tr th:each="c : ${clientes}">
-                    <td><strong th:text="${c.nombre()}"></strong></td>
-                    <td><span class="text-muted" th:text="${c.documento() ?: '—'}"></span></td>
-                    <td>
+                    <td class="cell-main"><strong th:text="${c.nombre()}"></strong></td>
+                    <td data-label="Documento"><span class="text-muted" th:text="${c.documento() ?: '—'}"></span></td>
+                    <td data-label="Condición IVA">
                         <span class="badge-cat"
                               th:text="${c.condicionIva() != null ? #strings.replace(c.condicionIva(), '_', ' ') : '—'}"></span>
                     </td>
-                    <td class="text-muted" style="font-size:13px">
+                    <td class="text-muted" style="font-size:13px" data-label="Contacto">
                         <span th:if="${c.email() != null}" th:text="${c.email()}"></span>
                         <span th:if="${c.telefono() != null}"
                               th:text="${(c.email() != null ? ' · ' : '') + c.telefono()}"></span>
                     </td>
-                    <td class="text-end">
+                    <td class="text-end cell-actions">
                         <a th:href="@{/clientes/{id}/editar(id=${c.id()})}"
                            class="btn btn-sm btn-outline-section-blue" title="Editar">
                             <i class="bi bi-pencil"></i>

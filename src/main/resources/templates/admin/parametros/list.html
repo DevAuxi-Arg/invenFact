@@ -15,7 +15,7 @@
 
     <div class="app-card">
         <div class="table-responsive">
-            <table class="table app-table">
+            <table class="table app-table cards-md">
                 <thead>
                 <tr>
                     <th style="width: 160px">Clave</th>
@@ -29,9 +29,9 @@
                     <td colspan="4" class="text-center text-muted py-4">No hay parámetros.</td>
                 </tr>
                 <tr th:each="p : ${parametros}">
-                    <td><strong th:text="${p.clave()}"></strong></td>
-                    <td><span class="text-muted" th:text="${p.descripcion()}"></span></td>
-                    <td>
+                    <td class="cell-main"><strong th:text="${p.clave()}"></strong></td>
+                    <td data-label="Descripción"><span class="text-muted" th:text="${p.descripcion()}"></span></td>
+                    <td data-label="Valor">
                         <!-- Editable solo por ADMIN -->
                         <form th:if="${isAdmin}" th:action="@{/admin/parametros/{clave}(clave=${p.clave()})}"
                               method="post" class="d-flex gap-1 form-section">
@@ -43,7 +43,7 @@
                         </form>
                         <span th:unless="${isAdmin}" th:text="${p.valor()}"></span>
                     </td>
-                    <td class="text-muted" style="font-size:12.5px">
+                    <td class="text-muted" style="font-size:12.5px" data-label="Última actualización">
                         <span th:text="${p.fechaActualizacion() != null} ? ${#temporals.format(p.fechaActualizacion(), 'dd/MM/yyyy HH:mm')} : '—'"></span>
                         <span th:if="${p.actualizadoPor()}" th:text="'· ' + ${p.actualizadoPor()}"></span>
                     </td>

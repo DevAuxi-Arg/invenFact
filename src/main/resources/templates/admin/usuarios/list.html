@@ -58,7 +58,7 @@
     <!-- Tabla -->
     <div class="app-card">
         <div class="table-responsive">
-            <table class="table table-hover app-table">
+            <table class="table table-hover app-table cards-md">
                 <thead>
                 <tr>
                     <th>Usuario</th>
@@ -76,7 +76,7 @@
                     </td>
                 </tr>
                 <tr th:each="u : ${usuarios}">
-                    <td>
+                    <td class="cell-main">
                         <div class="d-flex align-items-center gap-2">
                             <img th:if="${u.avatarUrl()}" th:src="${u.avatarUrl()}" alt="" class="user-thumb">
                             <span th:unless="${u.avatarUrl()}" class="user-thumb-fallback">
@@ -97,7 +97,7 @@
                             </span>
                         </div>
                     </td>
-                    <td>
+                    <td data-label="Rol">
                         <!-- Cambio de rol en línea (solo ADMIN) -->
                         <form th:if="${isAdmin}" th:action="@{/admin/usuarios/{id}/rol(id=${u.id()})}"
                               method="post" class="d-flex gap-1">
@@ -112,7 +112,7 @@
                         <span th:unless="${isAdmin}" class="role-badge"
                               th:classappend="'role-' + ${u.rol()}" th:text="${u.rol()}"></span>
                     </td>
-                    <td>
+                    <td data-label="Estado">
                         <span th:if="${u.bloqueado()}" class="estado-off">
                             <i class="bi bi-lock-fill"></i> Bloqueado
                         </span>
@@ -120,9 +120,9 @@
                               th:classappend="${u.activo()} ? 'estado-on' : 'estado-off'"
                               th:text="${u.activo()} ? 'Activo' : 'Inactivo'"></span>
                     </td>
-                    <td class="text-muted" style="font-size:12.5px"
+                    <td class="text-muted" style="font-size:12.5px" data-label="Último acceso"
                         th:text="${u.ultimoAcceso() != null} ? ${#temporals.format(u.ultimoAcceso(), 'dd/MM/yyyy HH:mm')} : '—'"></td>
-                    <td class="text-end">
+                    <td class="text-end cell-actions">
                         <a th:href="@{/admin/usuarios/{id}/editar(id=${u.id()})}"
                            class="btn btn-sm btn-outline-section-blue" title="Editar">
                             <i class="bi bi-pencil"></i>

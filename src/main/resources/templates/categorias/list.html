@@ -43,7 +43,7 @@
     <!-- Tabla -->
     <div class="app-card">
         <div class="table-responsive">
-            <table class="table table-hover app-table">
+            <table class="table table-hover app-table cards-md">
                 <thead th:with="sortRaw=${param.sort != null ? param.sort[0] : 'nombre,asc'},
                                 sortParts=${#strings.arraySplit(sortRaw, ',')},
                                 sortField=${sortParts[0]},
@@ -87,8 +87,8 @@
                     </td>
                 </tr>
                 <tr th:each="c : ${categorias}">
-                    <td><span class="text-muted" th:text="${c.id()}"></span></td>
-                    <td>
+                    <td class="cell-hide"><span class="text-muted" th:text="${c.id()}"></span></td>
+                    <td class="cell-main">
                         <div class="d-flex align-items-center gap-2">
                             <img th:if="${c.iconoUrl() != null and !c.iconoUrl().isEmpty()}"
                                  th:src="${c.iconoUrl()}" alt=""
@@ -97,13 +97,13 @@
                             <strong th:text="${c.nombre()}"></strong>
                         </div>
                     </td>
-                    <td>
+                    <td data-label="Descripción">
                         <span class="text-muted" th:text="${c.descripcion()}"></span>
                     </td>
-                    <td>
+                    <td data-label="IVA">
                         <span class="badge-cat" th:text="${c.alicuotaIva() != null ? #numbers.formatDecimal(c.alicuotaIva(), 1, 2) + ' %' : '—'}"></span>
                     </td>
-                    <td class="text-end">
+                    <td class="text-end cell-actions">
                         <a th:href="@{/categorias/{id}/editar(id=${c.id()})}"
                            class="btn btn-sm btn-outline-section-blue"
                            title="Editar">

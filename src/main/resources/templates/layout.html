@@ -530,6 +530,55 @@
 
         .app-table tbody tr:hover { background: #fafbfd; }
 
+        /* ── Tablas como tarjetas en mobile (agregar class="cards-md" a la <table>) ── */
+        @media (max-width: 767.98px) {
+            table.cards-md thead { display: none; }
+            table.cards-md, table.cards-md tbody { display: block; width: 100%; }
+            table.cards-md tr {
+                display: block;
+                margin-bottom: 14px;
+                border: 1px solid var(--c-border);
+                border-radius: 12px;
+                padding: 4px 14px;
+                background: #fff;
+                box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            }
+            table.cards-md td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 14px;
+                padding: 8px 0 !important;
+                border: none !important;
+                border-bottom: 1px solid #f1f2f5 !important;
+                text-align: right;
+                font-size: 13.5px;
+            }
+            table.cards-md tr td:last-child { border-bottom: none !important; }
+            table.cards-md td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #6b7280;
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                text-align: left;
+                flex: none;
+            }
+            /* Celda principal (nombre): ocupa toda la fila, como título de la tarjeta */
+            table.cards-md td.cell-main {
+                display: block;
+                text-align: left;
+                padding-top: 10px !important;
+            }
+            table.cards-md td.cell-main::before { content: ""; }
+            /* Celda de acciones: a la derecha, sin etiqueta */
+            table.cards-md td.cell-actions { justify-content: flex-end; }
+            table.cards-md td.cell-actions::before { content: ""; }
+            /* Celdas que no se muestran en mobile (ej. ID) */
+            table.cards-md td.cell-hide { display: none; }
+        }
+
         .badge-cat {
             background: var(--c-blue-soft);
             color: var(--c-blue);

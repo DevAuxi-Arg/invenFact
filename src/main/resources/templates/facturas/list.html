@@ -28,7 +28,7 @@
 
     <div class="app-card">
         <div class="table-responsive">
-            <table class="table table-hover app-table">
+            <table class="table table-hover app-table cards-md">
                 <thead>
                 <tr>
                     <th style="width: 130px">Número</th>
@@ -68,21 +68,21 @@
                     </td>
                 </tr>
                 <tr th:each="f : ${facturas}">
-                    <td><strong th:text="${f.numero()}"></strong></td>
-                    <td class="text-muted" style="font-size:13px"
+                    <td class="cell-main"><strong th:text="${f.numero()}"></strong></td>
+                    <td class="text-muted" style="font-size:13px" data-label="Fecha"
                         th:text="${#temporals.format(f.fecha(), 'dd/MM/yyyy HH:mm')}"></td>
-                    <td>
+                    <td data-label="Cliente">
                         <span th:text="${f.clienteNombre()}"></span>
                         <span class="text-muted" th:if="${f.clienteDocumento()}"
                               th:text="'· ' + ${f.clienteDocumento()}"></span>
                     </td>
-                    <td class="text-end fw-semibold"
+                    <td class="text-end fw-semibold" data-label="Total (ARS)"
                         th:text="${'$' + #numbers.formatDecimal(f.total(), 1, 'COMMA', 2, 'POINT')}"></td>
-                    <td>
+                    <td data-label="Estado">
                         <span class="estado-badge" th:classappend="'estado-' + ${f.estado()}"
                               th:text="${f.estado()}"></span>
                     </td>
-                    <td class="text-end">
+                    <td class="text-end cell-actions">
                         <a th:href="@{/facturas/{id}(id=${f.id()})}"
                            class="btn btn-sm btn-outline-section-green" title="Ver">
                             <i class="bi bi-eye"></i>
