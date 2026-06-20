@@ -5,20 +5,21 @@
 # 🛍️ Productos API
 
 **Sistema full-stack de gestión de productos, categorías y usuarios** con Spring Boot 4, PostgreSQL y arquitectura en capas.
-<br/>
+`<br/>`
 Doble interfaz sobre la misma lógica de negocio: **UI web** con Thymeleaf + Bootstrap y **API REST** documentada con Swagger.
-<br/>
+`<br/>`
 **Autenticación con Spring Security** — JWT para la API y sesión para la web, con **3 roles** (ADMIN, CO-ADMIN, BACKOFFICE) y dashboard de administración.
-<br/>
+`<br/>`
 **IVA por categoría y multimoneda** (ARS / USD) — el precio final se calcula al momento con la cotización del dólar parametrizable por el admin.
-<br/>
+`<br/>`
 **Facturación con snapshot** — al emitir, la factura congela precio, tipo de cambio, IVA y totales, y descuenta stock.
-<br/>
+`<br/>`
 **Clientes** — con condición de IVA (incl. exento); se pueden dar de alta desde la propia facturación.
 
 <br/>
 
 <!-- Demo en vivo -->
+
 <p align="center">
   <a href="https://invenfact.onrender.com">
     <img src="https://img.shields.io/badge/🌐_Ver_demo_en_vivo-invenfact.onrender.com-7c3aed?style=for-the-badge&labelColor=4c1d95" alt="Demo en vivo"/>
@@ -29,6 +30,7 @@ Doble interfaz sobre la misma lógica de negocio: **UI web** con Thymeleaf + Boo
 <br/>
 
 <!-- Stack principal -->
+
 <p align="center">
   <img src="https://img.shields.io/badge/Java-17-F89820?style=for-the-badge&logo=openjdk&logoColor=white&labelColor=1A1A2E" alt="Java 17"/>
   <img src="https://img.shields.io/badge/Spring%20Boot-4.0.6-6DB33F?style=for-the-badge&logo=springboot&logoColor=white&labelColor=0B2E13" alt="Spring Boot 4.0.6"/>
@@ -39,25 +41,25 @@ Doble interfaz sobre la misma lógica de negocio: **UI web** con Thymeleaf + Boo
   <img src="https://img.shields.io/badge/Supabase-Postgres-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white&labelColor=1A1A2E" alt="Supabase"/>
   <img src="https://img.shields.io/badge/Render-Deploy-46E3B7?style=for-the-badge&logo=render&logoColor=white&labelColor=1A1A2E" alt="Render"/>
   <img src="https://img.shields.io/badge/Hibernate-7.2-59666C?style=for-the-badge&logo=hibernate&logoColor=white&labelColor=1B2226" alt="Hibernate"/>
- 
+
 <!-- Stack secundario -->
- 
-  <img src="https://img.shields.io/badge/Thymeleaf-3.1-005F0F?style=for-the-badge&logo=thymeleaf&logoColor=white&labelColor=0A1F0E" alt="Thymeleaf"/>
+
+<img src="https://img.shields.io/badge/Thymeleaf-3.1-005F0F?style=for-the-badge&logo=thymeleaf&logoColor=white&labelColor=0A1F0E" alt="Thymeleaf"/>
   <img src="https://img.shields.io/badge/Bootstrap-5.3-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white&labelColor=1A0F26" alt="Bootstrap"/>
   <img src="https://img.shields.io/badge/Lombok-1.18-BC4521?style=for-the-badge&logoColor=white&labelColor=2E1108" alt="Lombok"/>
   <img src="https://img.shields.io/badge/Swagger-OpenAPI%203-85EA2D?style=for-the-badge&logo=swagger&logoColor=black&labelColor=1A2E0A" alt="Swagger / OpenAPI 3"/>
   <img src="https://img.shields.io/badge/Maven-3.9-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white&labelColor=2E0A10" alt="Maven"/>
- 
 
 <!-- Estado del proyecto -->
- 
-  <img src="https://img.shields.io/badge/Tests-58%20passing-4CAF50?style=for-the-badge&logo=junit5&logoColor=white&labelColor=1B3A2D" alt="Tests"/>
+
+<img src="https://img.shields.io/badge/Tests-58%20passing-4CAF50?style=for-the-badge&logo=junit5&logoColor=white&labelColor=1B3A2D" alt="Tests"/>
   <img src="https://img.shields.io/badge/Build-passing-4CAF50?style=for-the-badge&logo=apachemaven&logoColor=white&labelColor=1B3A2D" alt="Build"/>
   <img src="https://img.shields.io/badge/Arquitectura-MVC%20%2B%20Capas-2196F3?style=for-the-badge&labelColor=0A1A3D" alt="Arquitectura"/>
   <img src="https://img.shields.io/badge/Licencia-Educativa-9C27B0?style=for-the-badge&labelColor=1F0A2E" alt="Licencia"/>
 </p>
 
 <!-- Quick links -->
+
 <p align="center">
   <a href="#-cómo-ejecutar"><b>🚀 Ejecutar</b></a> ·
   <a href="#interfaces-disponibles"><b>🖥️ Interfaces</b></a> ·
@@ -120,11 +122,11 @@ Doble interfaz sobre la misma lógica de negocio: **UI web** con Thymeleaf + Boo
 
 ## Requisitos previos
 
-| Herramienta  | Versión mínima |
-| ------------ | -------------- |
-| JDK          | 17             |
-| PostgreSQL   | 13+ *(solo para la Opción B — local; con Supabase no hace falta instalarlo)* |
-| Maven        | No necesario (usar `mvnw`) |
+| Herramienta | Versión mínima                                                                |
+| ----------- | ------------------------------------------------------------------------------- |
+| JDK         | 17                                                                              |
+| PostgreSQL  | 13+*(solo para la Opción B — local; con Supabase no hace falta instalarlo)* |
+| Maven       | No necesario (usar `mvnw`)                                                    |
 
 ---
 
@@ -132,12 +134,12 @@ Doble interfaz sobre la misma lógica de negocio: **UI web** con Thymeleaf + Boo
 
 La conexión se configura por **variables de entorno**. Se puede apuntar a **Supabase** (PostgreSQL en la nube) o a un **PostgreSQL local**.
 
-| Variable      | Default                                         |
-| ------------- | ----------------------------------------------- |
+| Variable        | Default                                           |
+| --------------- | ------------------------------------------------- |
 | `DB_URL`      | `jdbc:postgresql://localhost:5432/productos_db` |
-| `DB_USER`     | `postgres`                                       |
-| `DB_PASSWORD` | `admin`                                          |
-| `SERVER_PORT` | `8080`                                           |
+| `DB_USER`     | `postgres`                                      |
+| `DB_PASSWORD` | `admin`                                         |
+| `SERVER_PORT` | `8080`                                          |
 
 Hibernate crea/actualiza el esquema automáticamente (`spring.jpa.hibernate.ddl-auto=update`): al primer arranque genera todas las tablas (`productos`, `categorias`, `clientes`, `facturas`, `lineas_factura`, `parametros`, `usuarios`, `refresh_tokens`, `password_reset_tokens`, `auditoria`).
 
@@ -154,6 +156,7 @@ Hibernate crea/actualiza el esquema automáticamente (`spring.jpa.hibernate.ddl-
    ```
 
    > Con el **Session pooler** el usuario lleva el ref del proyecto pegado (`postgres.<ref>`) y la URL exige `sslmode=require`. La *conexión directa* (`db.<ref>.supabase.co`) es solo IPv6 y no funciona en redes IPv4.
+   >
 
 El archivo `.env` está en `.gitignore`, así que las credenciales nunca se suben al repo.
 
@@ -164,7 +167,6 @@ El archivo `.env` está en `.gitignore`, así que las credenciales nunca se sube
    ```sql
    CREATE DATABASE productos_db;
    ```
-
 2. Sobrescribir las variables que difieran de los defaults, por ejemplo en PowerShell:
 
    ```powershell
@@ -174,22 +176,22 @@ El archivo `.env` está en `.gitignore`, así que las credenciales nunca se sube
 
 ### Variables de entorno — seguridad y correo
 
-| Variable | Default | Descripción |
-| --- | --- | --- |
-| `JWT_SECRET` | *(clave de desarrollo)* | **Cambiar en producción.** Clave HMAC del JWT (≥ 32 caracteres). |
-| `JWT_ACCESS_EXP` | `3600000` | Vigencia del access token en ms (1 h). |
-| `JWT_REFRESH_EXP` | `604800000` | Vigencia del refresh token en ms (7 días). |
-| `JWT_MAX_FAILED` | `5` | Intentos fallidos antes de bloquear la cuenta. |
-| `SEED_ADMIN_ENABLED` | `true` | Crea el ADMIN inicial si no hay usuarios. |
-| `SEED_ADMIN_EMAIL` | `admin@willysoft.com` | Email del ADMIN sembrado. |
-| `SEED_ADMIN_PASSWORD` | `Admin123!` | **Cambiar en producción.** Contraseña del ADMIN sembrado. |
-| `SEED_ADMIN_RECOVERY_EMAIL` | *(vacío)* | Email de recuperación del ADMIN sembrado. Útil cuando el email de login es ficticio. |
-| `MAIL_ENABLED` | `false` | Si es `false`, el enlace de reset se escribe en el log en vez de enviarse. |
-| `MAIL_FROM` | `no-reply@willysoft.com` | Remitente de los correos (con Gmail, usar la misma cuenta que `MAIL_USERNAME`). |
-| `RESET_EXP_MIN` | `30` | Vigencia del token de recuperación en minutos. |
-| `MAIL_HOST` | `smtp.gmail.com` | Servidor SMTP. |
-| `MAIL_PORT` | `587` | Puerto SMTP (STARTTLS). |
-| `MAIL_USERNAME` / `MAIL_PASSWORD` | — | Credenciales SMTP. Con Gmail, usar una **contraseña de aplicación** (requiere verificación en 2 pasos). |
+| Variable                              | Default                    | Descripción                                                                                                    |
+| ------------------------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `JWT_SECRET`                        | *(clave de desarrollo)*  | **Cambiar en producción.** Clave HMAC del JWT (≥ 32 caracteres).                                        |
+| `JWT_ACCESS_EXP`                    | `3600000`                | Vigencia del access token en ms (1 h).                                                                          |
+| `JWT_REFRESH_EXP`                   | `604800000`              | Vigencia del refresh token en ms (7 días).                                                                     |
+| `JWT_MAX_FAILED`                    | `5`                      | Intentos fallidos antes de bloquear la cuenta.                                                                  |
+| `SEED_ADMIN_ENABLED`                | `true`                   | Crea el ADMIN inicial si no hay usuarios.                                                                       |
+| `SEED_ADMIN_EMAIL`                  | `admin@willysoft.com`    | Email del ADMIN sembrado.                                                                                       |
+| `SEED_ADMIN_PASSWORD`               | `Admin123!`              | **Cambiar en producción.** Contraseña del ADMIN sembrado.                                               |
+| `SEED_ADMIN_RECOVERY_EMAIL`         | *(vacío)*               | Email de recuperación del ADMIN sembrado. Útil cuando el email de login es ficticio.                          |
+| `MAIL_ENABLED`                      | `false`                  | Si es `false`, el enlace de reset se escribe en el log en vez de enviarse.                                    |
+| `MAIL_FROM`                         | `no-reply@willysoft.com` | Remitente de los correos (con Gmail, usar la misma cuenta que `MAIL_USERNAME`).                               |
+| `RESET_EXP_MIN`                     | `30`                     | Vigencia del token de recuperación en minutos.                                                                 |
+| `MAIL_HOST`                         | `smtp.gmail.com`         | Servidor SMTP.                                                                                                  |
+| `MAIL_PORT`                         | `587`                    | Puerto SMTP (STARTTLS).                                                                                         |
+| `MAIL_USERNAME` / `MAIL_PASSWORD` | —                         | Credenciales SMTP. Con Gmail, usar una**contraseña de aplicación** (requiere verificación en 2 pasos). |
 
 > ⚠️ En producción, definí al menos `JWT_SECRET`, `SEED_ADMIN_PASSWORD` (o deshabilitá el seeder tras el primer arranque) y, si vas a enviar correos, las variables `MAIL_*`.
 
@@ -235,36 +237,40 @@ La aplicación se despliega en **[Render](https://render.com)** (build automáti
 
 Al compartir el enlace, se muestra una **tarjeta de previsualización** (Open Graph / Twitter Card) configurada en el `<head>` del layout.
 
+<div align="center">
+ <img src="./assets/preview.jpg" alt="preview" style="display:block;margin:0 auto;max-width:50%;height:auto;" />
+</div>
+
 ---
 
 ## Interfaces disponibles
 
 Con la aplicación corriendo, se tienen **dos interfaces** sobre la misma lógica de negocio:
 
-| Interfaz | URL | Para qué sirve |
-| --- | --- | --- |
-| **Vistas HTML (Thymeleaf)** | http://localhost:8080/ | UI web para operar el sistema desde el navegador |
-| **API REST (JSON)** | http://localhost:8080/api/... | Endpoints para consumir desde otro frontend o cliente |
-| **Swagger UI** | http://localhost:8080/swagger-ui.html | Documentación interactiva del API REST |
-| **OpenAPI JSON** | http://localhost:8080/v3/api-docs | Esquema OpenAPI para generar clientes |
+| Interfaz                          | URL                                   | Para qué sirve                                       |
+| --------------------------------- | ------------------------------------- | ----------------------------------------------------- |
+| **Vistas HTML (Thymeleaf)** | http://localhost:8080/                | UI web para operar el sistema desde el navegador      |
+| **API REST (JSON)**         | http://localhost:8080/api/...         | Endpoints para consumir desde otro frontend o cliente |
+| **Swagger UI**              | http://localhost:8080/swagger-ui.html | Documentación interactiva del API REST               |
+| **OpenAPI JSON**            | http://localhost:8080/v3/api-docs     | Esquema OpenAPI para generar clientes                 |
 
 ### Vistas HTML
 
-| Ruta | Acceso | Descripción |
-| --- | --- | --- |
-| `/` | Público | Página de inicio |
-| `/login` | Público | Inicio de sesión (formulario) |
-| `/forgot-password` | Público | Solicitar recuperación de contraseña |
-| `/reset-password?token=…` | Público | Establecer nueva contraseña |
-| `/categorias` · `/categorias/nueva` · `/categorias/{id}/editar` | Autenticado | CRUD de categorías |
-| `/productos` · `/productos/nuevo` · `/productos/{id}/editar` | Autenticado | CRUD de productos |
-| `/productos/catalogo` | Autenticado | **Lista de precios** por categoría (corte de control, solo lectura) |
-| `/clientes` · `/clientes/nuevo` · `/clientes/{id}/editar` | Autenticado | Gestión de clientes (editar/borrar: ADMIN · CO-ADMIN) |
-| `/facturas` · `/facturas/nueva` · `/facturas/{id}` | Autenticado | Listar, emitir y ver facturas (anular: ADMIN · CO-ADMIN) |
-| `/admin/dashboard` | ADMIN · CO-ADMIN | Panel con KPIs, gráfico y auditoría |
-| `/admin/usuarios` | ADMIN · CO-ADMIN | Gestión de usuarios (borrar y cambiar rol: solo ADMIN) |
-| `/admin/parametros` | ADMIN · CO-ADMIN | Parámetros del sistema, ej. dólar (editar: solo ADMIN) |
-| `/admin/ventas` | ADMIN · CO-ADMIN | Dashboard de ventas (KPIs, gráfico mensual, rankings) |
+| Ruta                                                                    | Acceso            | Descripción                                                               |
+| ----------------------------------------------------------------------- | ----------------- | -------------------------------------------------------------------------- |
+| `/`                                                                   | Público          | Página de inicio                                                          |
+| `/login`                                                              | Público          | Inicio de sesión (formulario)                                             |
+| `/forgot-password`                                                    | Público          | Solicitar recuperación de contraseña                                     |
+| `/reset-password?token=…`                                            | Público          | Establecer nueva contraseña                                               |
+| `/categorias` · `/categorias/nueva` · `/categorias/{id}/editar` | Autenticado       | CRUD de categorías                                                        |
+| `/productos` · `/productos/nuevo` · `/productos/{id}/editar`    | Autenticado       | CRUD de productos                                                          |
+| `/productos/catalogo`                                                 | Autenticado       | **Lista de precios** por categoría (corte de control, solo lectura) |
+| `/clientes` · `/clientes/nuevo` · `/clientes/{id}/editar`       | Autenticado       | Gestión de clientes (editar/borrar: ADMIN · CO-ADMIN)                    |
+| `/facturas` · `/facturas/nueva` · `/facturas/{id}`              | Autenticado       | Listar, emitir y ver facturas (anular: ADMIN · CO-ADMIN)                  |
+| `/admin/dashboard`                                                    | ADMIN · CO-ADMIN | Panel con KPIs, gráfico y auditoría                                      |
+| `/admin/usuarios`                                                     | ADMIN · CO-ADMIN | Gestión de usuarios (borrar y cambiar rol: solo ADMIN)                    |
+| `/admin/parametros`                                                   | ADMIN · CO-ADMIN | Parámetros del sistema, ej. dólar (editar: solo ADMIN)                   |
+| `/admin/ventas`                                                       | ADMIN · CO-ADMIN | Dashboard de ventas (KPIs, gráfico mensual, rankings)                     |
 
 > Al iniciar sesión por primera vez usá el ADMIN sembrado: **admin@willysoft.com / Admin123!**
 
@@ -274,10 +280,10 @@ Con la aplicación corriendo, se tienen **dos interfaces** sobre la misma lógic
 
 La seguridad se implementa con **Spring Security 7** mediante **dos cadenas de filtros independientes**, porque la aplicación tiene dos tipos de cliente:
 
-| Cadena | Aplica a | Mecanismo | Estado |
-| --- | --- | --- | --- |
+| Cadena                        | Aplica a    | Mecanismo                                            | Estado                      |
+| ----------------------------- | ----------- | ---------------------------------------------------- | --------------------------- |
 | **API** (`@Order(1)`) | `/api/**` | **JWT** en header `Authorization: Bearer …` | *Stateless* (sin sesión) |
-| **Web** (`@Order(2)`) | resto | **Formulario de login + sesión** | Con sesión (cookie) |
+| **Web** (`@Order(2)`) | resto       | **Formulario de login + sesión**              | Con sesión (cookie)        |
 
 - Las contraseñas se guardan con **BCrypt** (nunca en texto plano).
 - El **access token** es un JWT corto (1 h) que viaja en cada request a la API.
@@ -289,22 +295,23 @@ La seguridad se implementa con **Spring Security 7** mediante **dos cadenas de f
 
 Tres roles con una jerarquía clara: **ADMIN** gobierna personas y sistema; **CO-ADMIN** opera el negocio del día a día; **BACKOFFICE** es operativo puro.
 
-| Acción | ADMIN | CO-ADMIN | BACKOFFICE |
-| --- | :---: | :---: | :---: |
-| Login · ver dashboard | ✅ | ✅ | ✅* |
-| Productos / Categorías (leer, crear, editar) | ✅ | ✅ | ✅ |
-| Productos / Categorías (eliminar) | ✅ | ✅ | ❌ |
-| Crear / editar usuarios **BACKOFFICE** | ✅ | ✅ | ❌ |
-| Crear / editar otros **ADMIN o CO-ADMIN** | ✅ | ❌ | ❌ |
-| **Cambiar roles** | ✅ | ❌ | ❌ |
-| **Eliminar usuarios** | ✅ | ❌ | ❌ |
-| Ver auditoría | ✅ | ✅ | ❌ |
+| Acción                                        | ADMIN | CO-ADMIN | BACKOFFICE |
+| ---------------------------------------------- | :---: | :------: | :--------: |
+| Login · ver dashboard                         |  ✅  |    ✅    |    ✅*    |
+| Productos / Categorías (leer, crear, editar)  |  ✅  |    ✅    |     ✅     |
+| Productos / Categorías (eliminar)             |  ✅  |    ✅    |     ❌     |
+| Crear / editar usuarios**BACKOFFICE**    |  ✅  |    ✅    |     ❌     |
+| Crear / editar otros**ADMIN o CO-ADMIN** |  ✅  |    ❌    |     ❌     |
+| **Cambiar roles**                        |  ✅  |    ❌    |     ❌     |
+| **Eliminar usuarios**                    |  ✅  |    ❌    |     ❌     |
+| Ver auditoría                                 |  ✅  |    ✅    |     ❌     |
 
-<sub>\* BACKOFFICE no accede a `/admin/**`; opera el catálogo desde las vistas de productos/categorías.</sub>
+`<sub>`\* BACKOFFICE no accede a `/admin/**`; opera el catálogo desde las vistas de productos/categorías.`</sub>`
 
 > **En una frase:** un CO-ADMIN es un *admin delegado* — puede con todo el negocio y dar de alta backoffice, pero **no toca a otros administradores, ni roles, ni configuración**. Reglas reforzadas con `@PreAuthorize` (a nivel de endpoint) **y** en el `UserService` (a nivel de regla de negocio). Nadie puede cambiar su propio rol ni autoeliminarse.
 
 ### Flujo JWT (API)
+
 <div align="center">
  <sub>Diagrama original simplificado (sólo catálogo):</sub><br/>
  <img src="./assets/jwt.png" alt="DER" style="display:block;margin:0 auto;max-width:100%;height:auto;" />
@@ -344,11 +351,11 @@ En `/admin/dashboard` (ADMIN y CO-ADMIN): tarjetas KPI (productos, categorías, 
 
 Cada producto calcula su **precio final con IVA**, donde la **alícuota la determina la categoría** y el precio puede estar en **pesos o dólares**.
 
-| Concepto | Dónde vive | Quién lo mantiene |
-|---|---|---|
-| **Alícuota de IVA** | columna `alicuotaIva` en `Categoria` (%, `0` = exento) | ADMIN · CO-ADMIN |
-| **Cotización del dólar** | tabla `parametros`, clave `DOLAR` | **solo ADMIN** |
-| **Moneda del producto** | enum `Moneda { ARS, USD }` en `Producto` | ADMIN · CO-ADMIN |
+| Concepto                         | Dónde vive                                                  | Quién lo mantiene   |
+| -------------------------------- | ------------------------------------------------------------ | -------------------- |
+| **Alícuota de IVA**       | columna `alicuotaIva` en `Categoria` (%, `0` = exento) | ADMIN · CO-ADMIN    |
+| **Cotización del dólar** | tabla `parametros`, clave `DOLAR`                        | **solo ADMIN** |
+| **Moneda del producto**    | enum `Moneda { ARS, USD }` en `Producto`                 | ADMIN · CO-ADMIN    |
 
 El cálculo lo hace un **`PriceCalculationService`** (no la entidad), porque necesita el dólar vigente. **El precio final no se persiste: se calcula al leer**, así un cambio en el dólar o el IVA se refleja en todos los listados.
 
@@ -369,12 +376,12 @@ Todos los montos en `BigDecimal` con redondeo `HALF_UP` a 2 decimales.
 
 Una **factura es un documento histórico**: al emitirla se le saca una *foto* a los valores y se guardan copiados en cada línea. Después no se recalculan, aunque cambien el dólar, el IVA o el precio del producto.
 
-| Al emitir (`POST /api/facturas`) | Al anular |
-|---|---|
-| Toma el **dólar vigente** una sola vez | Marca la factura como `ANULADA` |
-| Calcula cada línea (neto, IVA, total) y la **congela** | **Devuelve el stock** de cada línea |
-| **Descuenta stock** (valida que alcance, si no → `409`) | |
-| Suma totales y asigna número `F-00000001` | |
+| Al emitir (`POST /api/facturas`)                               | Al anular                                  |
+| ---------------------------------------------------------------- | ------------------------------------------ |
+| Toma el**dólar vigente** una sola vez                     | Marca la factura como `ANULADA`          |
+| Calcula cada línea (neto, IVA, total) y la**congela**     | **Devuelve el stock** de cada línea |
+| **Descuenta stock** (valida que alcance, si no → `409`) |                                            |
+| Suma totales y asigna número `F-00000001`                     |                                            |
 
 **Qué se congela en cada línea:** `nombreProducto`, `monedaOriginal`, `precioUnitarioOriginal`, `cantidad`, `tipoCambioAplicado`, `alicuotaIva`, `netoArs`, `ivaMontoArs`, `totalArs`.
 
@@ -384,6 +391,7 @@ Día 30 · dólar 1.200            →  catálogo recalcula a 1.161.600, pero la
 ```
 
 **Cliente de la factura** — al emitir podés:
+
 - elegir un **cliente existente** (`clienteId`), o
 - cargar uno **nuevo** (nombre, documento, condición IVA); con `registrarCliente: true` además queda **dado de alta** en la base.
 
@@ -397,11 +405,11 @@ El proyecto sigue el patrón **MVC** clásico, implementado como una **arquitect
 
 ### Mapeo MVC
 
-| MVC clásico | En este proyecto | Archivos |
-| --- | --- | --- |
-| **Modelo (M)** — datos + reglas de negocio | **Entity** (tabla) + **Service** (reglas) | `Category.java`, `Product.java`, `CategoryService.java`, `ProductService.java` |
-| **Vista (V)** — lo que ve el cliente | **Templates Thymeleaf** (HTML) **+ DTOs serializados a JSON** (REST) | `templates/**/*.html`, `dto/*Response.java` |
-| **Controlador (C)** — recibe la request y decide qué hacer | **Web Controllers** (`@Controller`) y **REST Controllers** (`@RestController`) | `CategoryWebController.java`, `CategoryController.java`, etc. |
+| MVC clásico                                                       | En este proyecto                                                                               | Archivos                                                                               |
+| ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| **Modelo (M)** — datos + reglas de negocio                  | **Entity** (tabla) + **Service** (reglas)                                          | `Category.java`, `Product.java`, `CategoryService.java`, `ProductService.java` |
+| **Vista (V)** — lo que ve el cliente                        | **Templates Thymeleaf** (HTML) **+ DTOs serializados a JSON** (REST)               | `templates/**/*.html`, `dto/*Response.java`                                        |
+| **Controlador (C)** — recibe la request y decide qué hacer | **Web Controllers** (`@Controller`) y **REST Controllers** (`@RestController`) | `CategoryWebController.java`, `CategoryController.java`, etc.                      |
 
 ### Capas
 
@@ -449,13 +457,13 @@ El `GlobalExceptionHandler` está anotado con `@RestControllerAdvice(annotations
 
 ### Autenticación — `/api/auth` *(público)*
 
-| Método | Path | Descripción | Códigos |
-| --- | --- | --- | --- |
-| POST | `/api/auth/login` | Login → access + refresh token | 200, 400, 401 |
-| POST | `/api/auth/refresh` | Renovar access token (rota el refresh) | 200, 403 |
-| POST | `/api/auth/logout` | Revocar el refresh token | 204 |
-| POST | `/api/auth/password/forgot` | Solicitar email de recuperación | 204 |
-| POST | `/api/auth/password/reset` | Restablecer contraseña con token | 204, 400, 403 |
+| Método | Path                          | Descripción                           | Códigos      |
+| ------- | ----------------------------- | -------------------------------------- | ------------- |
+| POST    | `/api/auth/login`           | Login → access + refresh token        | 200, 400, 401 |
+| POST    | `/api/auth/refresh`         | Renovar access token (rota el refresh) | 200, 403      |
+| POST    | `/api/auth/logout`          | Revocar el refresh token               | 204           |
+| POST    | `/api/auth/password/forgot` | Solicitar email de recuperación       | 204           |
+| POST    | `/api/auth/password/reset`  | Restablecer contraseña con token      | 204, 400, 403 |
 
 **Uso rápido con token (curl):**
 
@@ -471,78 +479,78 @@ curl http://localhost:8080/api/usuarios/me -H "Authorization: Bearer $TOKEN"
 
 ### Usuarios — `/api/usuarios` *(requiere JWT)*
 
-| Método | Path | Descripción | Rol | Códigos |
-| --- | --- | --- | --- | --- |
-| GET | `/api/usuarios` | Listar paginado (búsqueda por nombre/email) | ADMIN · CO-ADMIN | 200 |
-| GET | `/api/usuarios/{id}` | Obtener usuario por id | ADMIN · CO-ADMIN | 200, 404 |
-| GET | `/api/usuarios/me` | Perfil del usuario autenticado | cualquiera | 200 |
-| PATCH | `/api/usuarios/me/password` | Cambiar la propia contraseña | cualquiera | 204, 403 |
-| POST | `/api/usuarios` | Crear usuario (CO-ADMIN: solo BACKOFFICE) | ADMIN · CO-ADMIN | 201, 400, 403, 409 |
-| PUT | `/api/usuarios/{id}` | Actualizar usuario (CO-ADMIN: solo BACKOFFICE) | ADMIN · CO-ADMIN | 200, 400, 403, 404, 409 |
-| PATCH | `/api/usuarios/{id}/rol` | Cambiar el rol de un usuario | **solo ADMIN** | 200, 403, 404 |
-| DELETE | `/api/usuarios/{id}` | Eliminar usuario | **solo ADMIN** | 204, 403, 404 |
+| Método | Path                          | Descripción                                   | Rol                  | Códigos                |
+| ------- | ----------------------------- | ---------------------------------------------- | -------------------- | ----------------------- |
+| GET     | `/api/usuarios`             | Listar paginado (búsqueda por nombre/email)   | ADMIN · CO-ADMIN    | 200                     |
+| GET     | `/api/usuarios/{id}`        | Obtener usuario por id                         | ADMIN · CO-ADMIN    | 200, 404                |
+| GET     | `/api/usuarios/me`          | Perfil del usuario autenticado                 | cualquiera           | 200                     |
+| PATCH   | `/api/usuarios/me/password` | Cambiar la propia contraseña                  | cualquiera           | 204, 403                |
+| POST    | `/api/usuarios`             | Crear usuario (CO-ADMIN: solo BACKOFFICE)      | ADMIN · CO-ADMIN    | 201, 400, 403, 409      |
+| PUT     | `/api/usuarios/{id}`        | Actualizar usuario (CO-ADMIN: solo BACKOFFICE) | ADMIN · CO-ADMIN    | 200, 400, 403, 404, 409 |
+| PATCH   | `/api/usuarios/{id}/rol`    | Cambiar el rol de un usuario                   | **solo ADMIN** | 200, 403, 404           |
+| DELETE  | `/api/usuarios/{id}`        | Eliminar usuario                               | **solo ADMIN** | 204, 403, 404           |
 
 ### Parámetros — `/api/parametros` *(requiere JWT)*
 
-| Método | Path | Descripción | Rol | Códigos |
-| --- | --- | --- | --- | --- |
-| GET | `/api/parametros` | Listar parámetros | ADMIN · CO-ADMIN | 200 |
-| GET | `/api/parametros/{clave}` | Obtener uno (ej. `DOLAR`) | ADMIN · CO-ADMIN | 200, 404 |
-| PUT | `/api/parametros/{clave}` | Actualizar valor (ej. cotización) | **solo ADMIN** | 200, 403, 404, 409 |
+| Método | Path                        | Descripción                       | Rol                  | Códigos           |
+| ------- | --------------------------- | ---------------------------------- | -------------------- | ------------------ |
+| GET     | `/api/parametros`         | Listar parámetros                 | ADMIN · CO-ADMIN    | 200                |
+| GET     | `/api/parametros/{clave}` | Obtener uno (ej.`DOLAR`)         | ADMIN · CO-ADMIN    | 200, 404           |
+| PUT     | `/api/parametros/{clave}` | Actualizar valor (ej. cotización) | **solo ADMIN** | 200, 403, 404, 409 |
 
 ### Categorías — `/api/categorias`
 
 > El request/response de categoría incluye `alicuotaIva` (porcentaje de IVA; default 21 si se omite) e `iconoUrl` (URL opcional de un ícono PNG/SVG/GIF de la categoría).
 
-| Método | Path                | Descripción                          | Códigos          |
-| ------ | ------------------- | ------------------------------------ | ---------------- |
-| GET    | `/api/categorias`    | Listar paginado con búsqueda por nombre | 200              |
-| GET    | `/api/categorias/{id}` | Obtener categoría por id           | 200, 404         |
-| POST   | `/api/categorias`    | Crear categoría                      | 201, 400, 409    |
-| PUT    | `/api/categorias/{id}` | Actualizar categoría               | 200, 400, 404, 409 |
-| DELETE | `/api/categorias/{id}` | Eliminar categoría                 | 204, 404, 409    |
+| Método | Path                     | Descripción                             | Códigos           |
+| ------- | ------------------------ | ---------------------------------------- | ------------------ |
+| GET     | `/api/categorias`      | Listar paginado con búsqueda por nombre | 200                |
+| GET     | `/api/categorias/{id}` | Obtener categoría por id                | 200, 404           |
+| POST    | `/api/categorias`      | Crear categoría                         | 201, 400, 409      |
+| PUT     | `/api/categorias/{id}` | Actualizar categoría                    | 200, 400, 404, 409 |
+| DELETE  | `/api/categorias/{id}` | Eliminar categoría                      | 204, 404, 409      |
 
 > **Nota:** no se puede eliminar una categoría si tiene productos asociados (devuelve `409 Conflict`).
 
 ### Productos — `/api/productos`
 
-| Método | Path                  | Descripción                          | Códigos          |
-| ------ | --------------------- | ------------------------------------ | ---------------- |
-| GET    | `/api/productos`       | Listar paginado con búsqueda por nombre y/o categoría | 200 |
-| GET    | `/api/productos/{id}`  | Obtener producto por id              | 200, 404         |
-| GET    | `/api/productos/{id}/precio` | Desglose de precio (neto, IVA, final ARS y USD) | 200, 404 |
-| POST   | `/api/productos`       | Crear producto                       | 201, 400, 404    |
-| PUT    | `/api/productos/{id}`  | Actualizar producto                  | 200, 400, 404    |
-| DELETE | `/api/productos/{id}`  | Eliminar producto                    | 204, 404         |
+| Método | Path                           | Descripción                                            | Códigos      |
+| ------- | ------------------------------ | ------------------------------------------------------- | ------------- |
+| GET     | `/api/productos`             | Listar paginado con búsqueda por nombre y/o categoría | 200           |
+| GET     | `/api/productos/{id}`        | Obtener producto por id                                 | 200, 404      |
+| GET     | `/api/productos/{id}/precio` | Desglose de precio (neto, IVA, final ARS y USD)         | 200, 404      |
+| POST    | `/api/productos`             | Crear producto                                          | 201, 400, 404 |
+| PUT     | `/api/productos/{id}`        | Actualizar producto                                     | 200, 400, 404 |
+| DELETE  | `/api/productos/{id}`        | Eliminar producto                                       | 204, 404      |
 
 > El request incluye `moneda` (`ARS` | `USD`; default `ARS`) e `imagenUrl` (URL opcional de la imagen del producto). El response agrega `moneda`, `precioFinalArs`, `precioFinalUsd` (calculados con el IVA de la categoría y el dólar vigente) e `imagenUrl`.
 
 ### Ventas — `/api/ventas` *(requiere JWT)*
 
-| Método | Path | Descripción | Rol | Códigos |
-| --- | --- | --- | --- | --- |
-| GET | `/api/ventas/dashboard` | KPIs, ventas por mes y rankings de productos/clientes | ADMIN · CO-ADMIN | 200 |
+| Método | Path                      | Descripción                                          | Rol               | Códigos |
+| ------- | ------------------------- | ----------------------------------------------------- | ----------------- | -------- |
+| GET     | `/api/ventas/dashboard` | KPIs, ventas por mes y rankings de productos/clientes | ADMIN · CO-ADMIN | 200      |
 
 ### Clientes — `/api/clientes` *(requiere JWT)*
 
-| Método | Path | Descripción | Rol | Códigos |
-| --- | --- | --- | --- | --- |
-| GET | `/api/clientes` | Listar paginado (búsqueda por nombre/documento) | cualquiera | 200 |
-| GET | `/api/clientes/{id}` | Obtener cliente por id | cualquiera | 200, 404 |
-| POST | `/api/clientes` | Crear cliente | ADMIN · CO-ADMIN · BACKOFFICE | 201, 400, 409 |
-| PUT | `/api/clientes/{id}` | Actualizar cliente | ADMIN · CO-ADMIN | 200, 400, 404, 409 |
-| DELETE | `/api/clientes/{id}` | Eliminar cliente | ADMIN · CO-ADMIN | 204, 404 |
+| Método | Path                   | Descripción                                     | Rol                             | Códigos           |
+| ------- | ---------------------- | ------------------------------------------------ | ------------------------------- | ------------------ |
+| GET     | `/api/clientes`      | Listar paginado (búsqueda por nombre/documento) | cualquiera                      | 200                |
+| GET     | `/api/clientes/{id}` | Obtener cliente por id                           | cualquiera                      | 200, 404           |
+| POST    | `/api/clientes`      | Crear cliente                                    | ADMIN · CO-ADMIN · BACKOFFICE | 201, 400, 409      |
+| PUT     | `/api/clientes/{id}` | Actualizar cliente                               | ADMIN · CO-ADMIN               | 200, 400, 404, 409 |
+| DELETE  | `/api/clientes/{id}` | Eliminar cliente                                 | ADMIN · CO-ADMIN               | 204, 404           |
 
 > `condicionIva`: `RESPONSABLE_INSCRIPTO` · `MONOTRIBUTO` · `EXENTO` · `CONSUMIDOR_FINAL` (default). El `documento` es único cuando está informado.
 
 ### Facturas — `/api/facturas` *(requiere JWT)*
 
-| Método | Path | Descripción | Rol | Códigos |
-| --- | --- | --- | --- | --- |
-| GET | `/api/facturas` | Listar paginado (ordenable por `fecha`, `clienteNombre`, `total`) | cualquiera | 200 |
-| GET | `/api/facturas/{id}` | Detalle de la factura | cualquiera | 200, 404 |
-| POST | `/api/facturas` | Emitir (congela valores, descuenta stock) | ADMIN · CO-ADMIN · BACKOFFICE | 201, 400, 404, 409 |
-| PATCH | `/api/facturas/{id}/anular` | Anular (devuelve stock) | ADMIN · CO-ADMIN | 200, 404, 409 |
+| Método | Path                          | Descripción                                                            | Rol                             | Códigos           |
+| ------- | ----------------------------- | ----------------------------------------------------------------------- | ------------------------------- | ------------------ |
+| GET     | `/api/facturas`             | Listar paginado (ordenable por `fecha`, `clienteNombre`, `total`) | cualquiera                      | 200                |
+| GET     | `/api/facturas/{id}`        | Detalle de la factura                                                   | cualquiera                      | 200, 404           |
+| POST    | `/api/facturas`             | Emitir (congela valores, descuenta stock)                               | ADMIN · CO-ADMIN · BACKOFFICE | 201, 400, 404, 409 |
+| PATCH   | `/api/facturas/{id}/anular` | Anular (devuelve stock)                                                 | ADMIN · CO-ADMIN               | 200, 404, 409      |
 
 > **Ordenación**: por defecto `fecha,desc`. Se puede cambiar con `?sort=campo,dir`, ej. `?sort=clienteNombre,asc` o `?sort=total,desc`. En la web, los encabezados **Fecha · Cliente · Total** son clicables (alternan ▲/▼).
 
@@ -575,13 +583,13 @@ curl http://localhost:8080/api/usuarios/me -H "Authorization: Bearer $TOKEN"
 
 Los endpoints `GET /api/categorias` y `GET /api/productos` aceptan estos query params:
 
-| Parámetro     | Tipo    | Default      | Descripción                                            |
-| ------------- | ------- | ------------ | ------------------------------------------------------ |
-| `page`        | int     | `0`          | Número de página (0-indexed)                           |
-| `size`        | int     | `10`         | Elementos por página                                   |
-| `sort`        | string  | `nombre,asc` | Campo y dirección (`nombre,asc` / `precio,desc`, etc.) |
-| `nombre`      | string  | —            | Búsqueda parcial case-insensitive                      |
-| `categoriaId` | long    | —            | (solo productos) Filtra por categoría                  |
+| Parámetro      | Tipo   | Default        | Descripción                                                |
+| --------------- | ------ | -------------- | ----------------------------------------------------------- |
+| `page`        | int    | `0`          | Número de página (0-indexed)                              |
+| `size`        | int    | `10`         | Elementos por página                                       |
+| `sort`        | string | `nombre,asc` | Campo y dirección (`nombre,asc` / `precio,desc`, etc.) |
+| `nombre`      | string | —             | Búsqueda parcial case-insensitive                          |
+| `categoriaId` | long   | —             | (solo productos) Filtra por categoría                      |
 
 **Ejemplos:**
 
@@ -972,12 +980,12 @@ Los tests usan **H2 en memoria** (no tocan tu Postgres real). Spring Boot detect
 
 ### Categorías de tests
 
-| Tipo                  | Archivos                          | Tests | Qué prueba                                                  |
-| --------------------- | --------------------------------- | ----- | ----------------------------------------------------------- |
-| **Repositorio (JPA)** | `*RepositoryTest.java`            | 7     | Queries derivadas y Specifications con H2 (`@DataJpaTest`)  |
-| **Servicio (unit)**   | `*ServiceTest.java`               | 35    | Lógica de negocio con mocks (`@ExtendWith(MockitoExtension)`) |
-| **Controller (REST)** | `*ControllerTest.java`            | 15    | Endpoints REST, validaciones, status codes (`@WebMvcTest`)  |
-| **Contexto Spring**   | `ProductosApiApplicationTests`    | 1     | El contexto completo arranca (incluida toda la seguridad)   |
+| Tipo                        | Archivos                         | Tests | Qué prueba                                                      |
+| --------------------------- | -------------------------------- | ----- | ---------------------------------------------------------------- |
+| **Repositorio (JPA)** | `*RepositoryTest.java`         | 7     | Queries derivadas y Specifications con H2 (`@DataJpaTest`)     |
+| **Servicio (unit)**   | `*ServiceTest.java`            | 35    | Lógica de negocio con mocks (`@ExtendWith(MockitoExtension)`) |
+| **Controller (REST)** | `*ControllerTest.java`         | 15    | Endpoints REST, validaciones, status codes (`@WebMvcTest`)     |
+| **Contexto Spring**   | `ProductosApiApplicationTests` | 1     | El contexto completo arranca (incluida toda la seguridad)        |
 
 ### Qué se cubre
 
@@ -1004,7 +1012,6 @@ En Spring Boot 4 algunos paquetes de test se reorganizaron:
 
 ---
 
-
 ## Autor
 
 **Willysoft** · lic.gfescobar@gmail.com · Guillermo Escobar
@@ -1014,14 +1021,15 @@ En Spring Boot 4 algunos paquetes de test se reorganizaron:
 **Programa**  Talento Tech 1er. cuat. 2026
 
 ---
+
 ---
 
 ## 🧑‍💻 **SOBRE EL DESARROLLADOR**
 
 <div align="center">
 
-
 ### 👨‍🚀 **WILLY ESCOBAR**
+
 *Software Engineer | UI/UX Designer | STEAM Creator blending Software Engineering and Visual Arts*
 
 <br>

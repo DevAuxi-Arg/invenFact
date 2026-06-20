@@ -71,7 +71,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/forgot-password", "/reset-password",
                                 "/css/**", "/js/**", "/img/**", "/fonts/**", "/webjars/**").permitAll()
-                        .requestMatchers("/", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/", "/error", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/admin/**").hasAnyRole("ADMIN", "COADMIN")
                         .anyRequest().authenticated())
                 .formLogin(form -> form

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Error</title>
+    <link rel="icon" type="image/png" th:href="@{/img/favicon/favicon-96x96.png}" sizes="96x96">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #26193f, #1c1233);
+            padding: 24px;
+        }
+        .err-card {
+            background: #fff; border-radius: 18px; padding: 40px 34px;
+            max-width: 440px; width: 100%; text-align: center;
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+        }
+        .err-img { margin: 0 auto 12px; line-height: 0; }
+        .err-img img { height: 150px; width: auto; max-width: 80%; display: inline-block; }
+        .err-code { font-size: 56px; font-weight: 800; color: #6d28d9; line-height: 1; margin-bottom: 6px; }
+        .err-title { font-size: 22px; font-weight: 700; color: #1a1d27; margin: 0 0 10px; }
+        .err-msg { font-size: 14.5px; color: #5b6270; line-height: 1.55; margin: 0 0 26px; }
+        .err-actions { display: flex; flex-direction: column; gap: 10px; }
+        .btn-err {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 11px; border-radius: 10px; font-weight: 600; font-size: 14.5px;
+            text-decoration: none; border: none; cursor: pointer;
+        }
+        .btn-primary-err { background: #7c3aed; color: #fff; }
+        .btn-primary-err:hover { background: #6d28d9; }
+        .btn-ghost-err { background: transparent; color: #6d28d9; border: 1px solid #d9c9f5; }
+        .btn-ghost-err:hover { background: #f6f0fe; }
+    </style>
+</head>
+<body>
+    <div class="err-card">
+        <div class="err-img" th:switch="${status}">
+            <img th:case="403" th:src="@{/img/403.png}" alt="Acceso denegado">
+            <img th:case="404" th:src="@{/img/404.png}" alt="No encontrado">
+            <img th:case="500" th:src="@{/img/500.png}" alt="Error del servidor">
+            <img th:case="401" th:src="@{/img/ups-sonrisa.png}" alt="Iniciá sesión">
+            <img th:case="*" th:src="@{/img/ups.png}" alt="Ups">
+        </div>
+
+        <div class="err-code" th:text="${status} ?: 'Error'">403</div>
+
+        <h1 class="err-title" th:switch="${status}">
+            <span th:case="403">Acceso denegado</span>
+            <span th:case="401">Necesitás iniciar sesión</span>
+            <span th:case="404">Página no encontrada</span>
+            <span th:case="*">Algo salió mal</span>
+        </h1>
+
+        <p class="err-msg" th:switch="${status}">
+            <span th:case="403">No tenés permiso para acceder a esto. Puede que tu sesión haya
+                expirado o que tu rol no tenga acceso a esta sección. Probá iniciar sesión de nuevo.</span>
+            <span th:case="401">Tu sesión expiró o no iniciaste sesión. Ingresá nuevamente para continuar.</span>
+            <span th:case="404">La página que buscás no existe o fue movida.</span>
+            <span th:case="*">Ocurrió un error inesperado. Probá de nuevo en unos minutos.</span>
+        </p>
+
+        <div class="err-actions">
+            <a th:href="@{/login}" class="btn-err btn-primary-err">
+                <i class="bi bi-box-arrow-in-right"></i> Iniciar sesión
+            </a>
+            <a th:href="@{/}" class="btn-err btn-ghost-err">
+                <i class="bi bi-house"></i> Volver al inicio
+            </a>
+        </div>
+    </div>
+</body>
+</html>
