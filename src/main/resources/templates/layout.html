@@ -368,9 +368,59 @@
         .navbar-willysoft .navbar-toggler {
             border-color: rgba(255, 255, 255, 0.12);
         }
+        .navbar-willysoft .navbar-toggler:focus { box-shadow: none; }
 
-        .navbar-willysoft .navbar-toggler-icon {
-            filter: invert(1);
+        /* Hamburguesa animada que se transforma en X */
+        .hamburger {
+            display: inline-flex; flex-direction: column; justify-content: center;
+            gap: 5px; width: 24px; height: 18px;
+        }
+        .hamburger span {
+            display: block; height: 2.5px; width: 100%; border-radius: 3px;
+            background: #fff;
+            transition: transform 0.3s ease, opacity 0.2s ease;
+        }
+        .navbar-toggler[aria-expanded="true"] .hamburger span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+        .navbar-toggler[aria-expanded="true"] .hamburger span:nth-child(2) { opacity: 0; }
+        .navbar-toggler[aria-expanded="true"] .hamburger span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+        /* Entrada escalonada de los ítems al abrir el menú en mobile */
+        @keyframes navItemIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 991.98px) {
+            .navbar-willysoft .navbar-collapse.show .nav-item {
+                animation: navItemIn 0.32s ease both;
+            }
+            .navbar-collapse.show .nav-item:nth-child(1) { animation-delay: 0.04s; }
+            .navbar-collapse.show .nav-item:nth-child(2) { animation-delay: 0.08s; }
+            .navbar-collapse.show .nav-item:nth-child(3) { animation-delay: 0.12s; }
+            .navbar-collapse.show .nav-item:nth-child(4) { animation-delay: 0.16s; }
+            .navbar-collapse.show .nav-item:nth-child(5) { animation-delay: 0.20s; }
+            .navbar-collapse.show .nav-item:nth-child(6) { animation-delay: 0.24s; }
+            .navbar-collapse.show .nav-item:nth-child(7) { animation-delay: 0.28s; }
+            .navbar-collapse.show .nav-item:nth-child(8) { animation-delay: 0.32s; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .navbar-willysoft .navbar-collapse.show .nav-item { animation: none; }
+            .hamburger span { transition: none; }
+        }
+
+        /* Feedback en la opción del menú que se está abriendo (Render free tarda) */
+        @keyframes navSpin { to { transform: rotate(360deg); } }
+        .navbar-willysoft .nav-link.is-loading {
+            background: rgba(255, 255, 255, 0.18) !important;
+            color: #fff !important;
+        }
+        .navbar-willysoft .nav-link.is-loading::after {
+            content: ""; display: inline-block; margin-left: 8px;
+            width: 14px; height: 14px; vertical-align: -2px;
+            border: 2px solid rgba(255, 255, 255, 0.4); border-top-color: #fff;
+            border-radius: 50%; animation: navSpin 0.7s linear infinite;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .navbar-willysoft .nav-link.is-loading::after { animation: none; }
         }
 
         /* ── Page header (espejo del hero) ────────────── */
@@ -852,7 +902,9 @@
                 aria-controls="nav"
                 aria-expanded="false"
                 aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+            <span class="hamburger" aria-hidden="true">
+                <span></span><span></span><span></span>
+            </span>
         </button>
 
         <div class="collapse navbar-collapse" id="nav">
@@ -1008,6 +1060,15 @@
         });
         // Envío de formularios (POST, búsquedas, etc.)
         document.addEventListener('submit', start);
+        // Feedback en la opción del menú elegida (spinner + resaltado)
+        document.querySelectorAll('.navbar-willysoft .nav-link').forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                var href = link.getAttribute('href');
+                if (!href || href.charAt(0) === '#') return;
+                if (link.target === '_blank' || e.ctrlKey || e.metaKey || e.shiftKey) return;
+                link.classList.add('is-loading');
+            });
+        });
         // Al volver con "atrás" (cache del navegador) se resetea
         window.addEventListener('pageshow', function () {
             started = false;
