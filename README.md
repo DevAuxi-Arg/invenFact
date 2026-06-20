@@ -18,6 +18,16 @@ Doble interfaz sobre la misma lógica de negocio: **UI web** con Thymeleaf + Boo
 
 <br/>
 
+<!-- Demo en vivo -->
+<p align="center">
+  <a href="https://invenfact.onrender.com">
+    <img src="https://img.shields.io/badge/🌐_Ver_demo_en_vivo-invenfact.onrender.com-7c3aed?style=for-the-badge&labelColor=4c1d95" alt="Demo en vivo"/>
+  </a>
+</p>
+<p align="center"><sub><i>Alojado en Render (plan gratuito): la primera carga puede tardar unos segundos en "despertar".</i></sub></p>
+
+<br/>
+
 <!-- Stack principal -->
 <p align="center">
   <img src="https://img.shields.io/badge/Java-17-F89820?style=for-the-badge&logo=openjdk&logoColor=white&labelColor=1A1A2E" alt="Java 17"/>
@@ -25,7 +35,9 @@ Doble interfaz sobre la misma lógica de negocio: **UI web** con Thymeleaf + Boo
   <img src="https://img.shields.io/badge/Spring%20Framework-7-6DB33F?style=for-the-badge&logo=spring&logoColor=white&labelColor=0B2E13" alt="Spring Framework 7"/>
   <img src="https://img.shields.io/badge/Spring%20Security-7-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white&labelColor=0B2E13" alt="Spring Security 7"/>
   <img src="https://img.shields.io/badge/JWT-jjwt%200.12-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white&labelColor=1A1A2E" alt="JWT"/>
-  <img src="https://img.shields.io/badge/PostgreSQL-18-4169E1?style=for-the-badge&logo=postgresql&logoColor=white&labelColor=0F1B3D" alt="PostgreSQL 18"/>
+  <img src="https://img.shields.io/badge/PostgreSQL-17-4169E1?style=for-the-badge&logo=postgresql&logoColor=white&labelColor=0F1B3D" alt="PostgreSQL 17"/>
+  <img src="https://img.shields.io/badge/Supabase-Postgres-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white&labelColor=1A1A2E" alt="Supabase"/>
+  <img src="https://img.shields.io/badge/Render-Deploy-46E3B7?style=for-the-badge&logo=render&logoColor=white&labelColor=1A1A2E" alt="Render"/>
   <img src="https://img.shields.io/badge/Hibernate-7.2-59666C?style=for-the-badge&logo=hibernate&logoColor=white&labelColor=1B2226" alt="Hibernate"/>
  
 <!-- Stack secundario -->
@@ -210,6 +222,21 @@ java -jar target\productos-api-0.0.1-SNAPSHOT.jar
 
 ---
 
+## Despliegue
+
+La aplicación se despliega en **[Render](https://render.com)** (build automático desde GitHub) con la base de datos en **Supabase**.
+
+- El `Dockerfile` (multi-stage: build con Maven + runtime con JRE 17) le indica a Render cómo construir la imagen.
+- Render inyecta la variable `PORT`, que la app toma automáticamente (`server.port=${PORT:...}`).
+- Las credenciales y la configuración (`DB_*`, `JWT_SECRET`, `MAIL_*`, etc.) se cargan como **variables de entorno** en Render — nunca en el repo.
+- Cada `git push` a `main` dispara un **redeploy** automático.
+
+> En el plan gratuito, la instancia se suspende tras un rato de inactividad: la primera visita puede tardar unos segundos en "despertar". La variable `JAVA_TOOL_OPTIONS=-Xmx320m` ayuda a mantener la app dentro del límite de memoria.
+
+Al compartir el enlace, se muestra una **tarjeta de previsualización** (Open Graph / Twitter Card) configurada en el `<head>` del layout.
+
+---
+
 ## Interfaces disponibles
 
 Con la aplicación corriendo, se tienen **dos interfaces** sobre la misma lógica de negocio:
@@ -304,6 +331,8 @@ Las sesiones se revocan automáticamente al **cambiar la contraseña**, **restab
 ### Recuperación de contraseña
 
 `POST /api/auth/password/forgot` genera un **token de un solo uso** (válido 30 min) y envía un email con el enlace. La respuesta es siempre `204` (exista o no el email) para no revelar cuentas. Con `MAIL_ENABLED=false` (default), **el enlace se escribe en el log** para poder probar el flujo sin SMTP. Luego `POST /api/auth/password/reset` aplica la nueva contraseña y cierra todas las sesiones.
+
+> **Email de recuperación.** Cada usuario tiene un campo opcional `emailRecuperacion`: si está definido, el enlace de reset se envía allí en lugar de al email de login. Esto permite usar un email de login ficticio (ej. `admin@willysoft.com`) y aun así recibir el correo en una casilla real. Si queda vacío, se usa el email de login.
 
 ### Dashboard de administración
 
@@ -613,6 +642,7 @@ erDiagram
         bigint   id PK
         string   nombre
         string   email UK
+        string   email_recuperacion "destino del reset (opcional)"
         string   password "BCrypt"
         enum     rol "ADMIN|COADMIN|BACKOFFICE"
         boolean  activo
