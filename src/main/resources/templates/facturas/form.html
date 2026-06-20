@@ -88,6 +88,19 @@
         </div>
 
         <!-- Líneas -->
+        <style>
+            /* Armador de factura en mobile (tarjetas): controles cómodos de tocar */
+            @media (max-width: 767.98px) {
+                #tablaLineas td.cell-main { padding-bottom: 4px !important; }
+                #tablaLineas td.cell-main .ts-wrapper,
+                #tablaLineas td.cell-main select { width: 100%; }
+                #tablaLineas td[data-label="Cantidad"] .form-control {
+                    width: 120px; text-align: center;
+                }
+                #tablaLineas td.cell-actions { padding-top: 4px !important; }
+                #tablaLineas td.cell-actions .btnQuitar { width: 100%; }
+            }
+        </style>
         <div class="app-card mb-3">
             <div class="card-body form-section section-green">
                 <div class="d-flex justify-content-between align-items-center mb-2">
