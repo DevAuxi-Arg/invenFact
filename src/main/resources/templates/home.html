@@ -657,6 +657,48 @@
     </div>
     <!-- /Panel con sesión -->
 
+    <!-- Toast al abrir una sección desde el home -->
+    <style>
+        .nav-toast {
+            position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px);
+            background: #1c1233; color: #fff; padding: 12px 20px; border-radius: 12px;
+            display: flex; align-items: center; gap: 12px;
+            font-size: 14px; font-weight: 500; max-width: 90vw;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.38);
+            z-index: 4001; opacity: 0; pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+        .nav-toast.show { opacity: 1; transform: translate(-50%, 0); }
+        .nav-toast-spinner {
+            width: 18px; height: 18px; flex: none;
+            border: 2.5px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #a371f7; border-radius: 50%;
+            animation: navToastSpin 0.7s linear infinite;
+        }
+        @keyframes navToastSpin { to { transform: rotate(360deg); } }
+        @media (prefers-reduced-motion: reduce) { .nav-toast-spinner { animation: none; } }
+    </style>
+    <div id="moduleToast" class="nav-toast" role="status" aria-live="polite">
+        <span class="nav-toast-spinner"></span>
+        <span id="moduleToastText">Cargando…</span>
+    </div>
+    <script>
+        (function () {
+            var toast = document.getElementById('moduleToast');
+            var text = document.getElementById('moduleToastText');
+            if (!toast) return;
+            document.querySelectorAll('.module-btn').forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
+                    if (e.ctrlKey || e.metaKey || e.shiftKey) return;   // pestaña nueva: no mostrar
+                    var card = btn.closest('.module-card');
+                    var title = card ? card.querySelector('.module-title') : null;
+                    text.textContent = 'Abriendo ' + (title ? title.textContent.trim() : 'la sección') + '…';
+                    toast.classList.add('show');
+                });
+            });
+        })();
+    </script>
+
 </main>
 </body>
 </html>
