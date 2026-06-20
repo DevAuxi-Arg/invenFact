@@ -448,6 +448,26 @@ Beneficios: evita filtrar campos sensibles, desacopla el modelo de BD del API p�
 
 El `GlobalExceptionHandler` está anotado con `@RestControllerAdvice(annotations = RestController.class)`, por lo que **solo intercepta los REST controllers**. Las vistas HTML manejan sus errores con redirects y mensajes flash (en verde / rojo arriba de cada página).
 
+### Página de error personalizada
+
+En lugar de la *Whitelabel Error Page* de Spring, hay una plantilla `error.html` propia (que Spring Boot usa para cualquier error) con una ilustración del personaje según el código:
+
+<table>
+  <tr>
+    <td align="center"><img src="./src/main/resources/static/img/403.png" height="90"/><br/><b>403</b><br/>Acceso denegado</td>
+    <td align="center"><img src="./src/main/resources/static/img/404.png" height="90"/><br/><b>404</b><br/>No encontrado</td>
+    <td align="center"><img src="./src/main/resources/static/img/500.png" height="90"/><br/><b>500</b><br/>Error del servidor</td>
+    <td align="center"><img src="./src/main/resources/static/img/ups-sonrisa.png" height="90"/><br/><b>401</b><br/>Iniciá sesión</td>
+    <td align="center"><img src="./src/main/resources/static/img/ups.png" height="90"/><br/><b>otros</b><br/>Ups</td>
+  </tr>
+</table>
+
+El **403** suele aparecer cuando la **sesión expira** (en el plan gratuito de Render la instancia se reinicia y pierde la sesión en memoria) o cuando un rol intenta acceder a una sección sin permiso.
+
+<div align="center">
+ <img src="./assets/403.png" alt="preview" style="display:block;margin:0 auto;max-width:50%;height:auto;" />
+</div>
+
 ---
 
 ## Endpoints
