@@ -71,7 +71,7 @@
 
             <!-- Líneas -->
             <div class="table-responsive">
-                <table class="table app-table">
+                <table class="table app-table cards-md">
                     <thead>
                     <tr>
                         <th>Producto</th>
@@ -85,16 +85,16 @@
                     </thead>
                     <tbody>
                     <tr th:each="l : ${factura.lineas()}">
-                        <td th:text="${l.nombreProducto()}"></td>
-                        <td class="text-end">
+                        <td class="cell-main" th:text="${l.nombreProducto()}"></td>
+                        <td class="text-end" data-label="P. unitario">
                             <span class="text-muted small" th:text="${l.monedaOriginal()}"></span>
                             <span th:text="${#numbers.formatDecimal(l.precioUnitarioOriginal(), 1, 'COMMA', 2, 'POINT')}"></span>
                         </td>
-                        <td class="text-end" th:text="${l.cantidad()}"></td>
-                        <td class="text-end" th:text="${#numbers.formatDecimal(l.alicuotaIva(), 1, 2) + '%'}"></td>
-                        <td class="text-end" th:text="${#numbers.formatDecimal(l.netoArs(), 1, 'COMMA', 2, 'POINT')}"></td>
-                        <td class="text-end" th:text="${#numbers.formatDecimal(l.ivaMontoArs(), 1, 'COMMA', 2, 'POINT')}"></td>
-                        <td class="text-end fw-semibold" th:text="${#numbers.formatDecimal(l.totalArs(), 1, 'COMMA', 2, 'POINT')}"></td>
+                        <td class="text-end" data-label="Cant." th:text="${l.cantidad()}"></td>
+                        <td class="text-end" data-label="IVA" th:text="${#numbers.formatDecimal(l.alicuotaIva(), 1, 2) + '%'}"></td>
+                        <td class="text-end" data-label="Neto (ARS)" th:text="${#numbers.formatDecimal(l.netoArs(), 1, 'COMMA', 2, 'POINT')}"></td>
+                        <td class="text-end" data-label="IVA (ARS)" th:text="${#numbers.formatDecimal(l.ivaMontoArs(), 1, 'COMMA', 2, 'POINT')}"></td>
+                        <td class="text-end fw-semibold" data-label="Total (ARS)" th:text="${#numbers.formatDecimal(l.totalArs(), 1, 'COMMA', 2, 'POINT')}"></td>
                     </tr>
                     </tbody>
                 </table>
