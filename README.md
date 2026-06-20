@@ -1,8 +1,12 @@
 <div align="center">
 
 <img src="./assets/header.png" alt="Productos API" style="display:block;margin:0 auto;max-width:100%;height:auto;" />
-
-# 🛍️ Productos API
+<br>
+<div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+<img src="./assets/productos-api.png" alt="Productos API" height="100px" />
+<h1>Productos API</h1>
+</div>
+<br>
 
 **Sistema full-stack de gestión de productos, categorías y usuarios** con Spring Boot 4, PostgreSQL y arquitectura en capas.
 `<br/>`

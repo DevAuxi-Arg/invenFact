@@ -801,10 +801,23 @@
             }
             .page-header-actions .btn { width: 100%; }
         }
+
+        /* ── Barra de carga al navegar (feedback en cada click/envío) ── */
+        #nav-progress {
+            position: fixed; top: 0; left: 0; height: 3px; width: 0;
+            background: linear-gradient(90deg, #7c3aed, #a371f7);
+            box-shadow: 0 0 10px rgba(124, 58, 237, 0.8);
+            z-index: 4000; opacity: 0;
+            transition: width 0.35s ease, opacity 0.25s ease;
+        }
+        #nav-progress.active { opacity: 1; }
     </style>
 </head>
 
 <body>
+
+<!-- Barra de progreso de navegación -->
+<div id="nav-progress"></div>
 
 <!-- ── Navbar landing (sin sesión): solo el título centrado ── -->
 <nav class="navbar navbar-willysoft landing-nav" th:if="${currentEmail == null}">
@@ -965,6 +978,42 @@
             }
         });
         if (best) { best.classList.add('active'); }
+    })();
+</script>
+
+<!-- Barra de carga al navegar: feedback inmediato al tocar links o enviar formularios -->
+<script>
+    (function () {
+        var bar = document.getElementById('nav-progress');
+        if (!bar) return;
+        var started = false;
+        function start() {
+            if (started) return;
+            started = true;
+            bar.classList.add('active');
+            bar.style.width = '15%';
+            setTimeout(function () { bar.style.width = '70%'; }, 60);
+            setTimeout(function () { bar.style.width = '92%'; }, 450);
+        }
+        // Clicks en links que navegan en la misma pestaña
+        document.addEventListener('click', function (e) {
+            var a = e.target.closest('a');
+            if (!a) return;
+            var href = a.getAttribute('href');
+            if (!href || href.charAt(0) === '#') return;
+            if (a.target === '_blank' || a.hasAttribute('download')) return;
+            if (href.indexOf('javascript:') === 0) return;
+            if (e.ctrlKey || e.metaKey || e.shiftKey) return;   // abrir en pestaña nueva: no mostrar
+            start();
+        });
+        // Envío de formularios (POST, búsquedas, etc.)
+        document.addEventListener('submit', start);
+        // Al volver con "atrás" (cache del navegador) se resetea
+        window.addEventListener('pageshow', function () {
+            started = false;
+            bar.classList.remove('active');
+            bar.style.width = '0';
+        });
     })();
 </script>
 
