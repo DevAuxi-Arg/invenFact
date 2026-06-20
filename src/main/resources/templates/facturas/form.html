@@ -97,7 +97,7 @@
                     </button>
                 </div>
                 <div class="table-responsive">
-                    <table class="table app-table mb-0" id="tablaLineas">
+                    <table class="table app-table mb-0 cards-md" id="tablaLineas">
                         <thead>
                         <tr>
                             <th>Producto</th>
@@ -109,7 +109,7 @@
                         <!-- Filas ya cargadas (se re-renderizan si vuelve por un error) -->
                         <tr th:each="linea : ${lineas}"
                             th:classappend="${productosConError != null and productosConError.contains(linea.productoId())} ? 'linea-error' : ''">
-                            <td>
+                            <td class="cell-main">
                                 <select name="productoId" class="form-select form-select-sm" required>
                                     <option value="">-- Seleccionar producto --</option>
                                     <option th:each="p : ${productos}" th:value="${p.id()}"
@@ -118,11 +118,11 @@
                                             th:text="${p.nombre()}"></option>
                                 </select>
                             </td>
-                            <td>
+                            <td data-label="Cantidad">
                                 <input type="number" name="cantidad" class="form-control form-control-sm" min="1"
                                        th:value="${linea.cantidad()}" required>
                             </td>
-                            <td class="text-end">
+                            <td class="text-end cell-actions">
                                 <button type="button" class="btn btn-sm btn-outline-danger btnQuitar" title="Quitar">
                                     <i class="bi bi-x-lg"></i>
                                 </button>
@@ -148,7 +148,7 @@
     <!-- Plantilla de fila -->
     <template id="filaTemplate">
         <tr>
-            <td>
+            <td class="cell-main">
                 <select name="productoId" class="form-select form-select-sm" required>
                     <option value="">-- Seleccionar producto --</option>
                     <option th:each="p : ${productos}" th:value="${p.id()}"
@@ -156,10 +156,10 @@
                             th:text="${p.nombre()}"></option>
                 </select>
             </td>
-            <td>
+            <td data-label="Cantidad">
                 <input type="number" name="cantidad" class="form-control form-control-sm" min="1" value="1" required>
             </td>
-            <td class="text-end">
+            <td class="text-end cell-actions">
                 <button type="button" class="btn btn-sm btn-outline-danger btnQuitar" title="Quitar">
                     <i class="bi bi-x-lg"></i>
                 </button>
@@ -243,8 +243,8 @@
             Swal.fire({
                 title: 'No se pudo emitir la factura',
                 text: /*[[${error}]]*/ 'Error',
-                imageUrl: /*[[@{/img/toad.png}]]*/ '',
-                imageWidth: 130,
+                imageUrl: /*[[@{/img/factura-no-emitida.png}]]*/ '',
+                imageWidth: 160,
                 imageAlt: 'invenFact',
                 confirmButtonText: 'Entendido',
                 confirmButtonColor: '#3B6D11',

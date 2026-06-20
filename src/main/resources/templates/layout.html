@@ -577,6 +577,11 @@
             table.cards-md td.cell-actions::before { content: ""; }
             /* Celdas que no se muestran en mobile (ej. ID) */
             table.cards-md td.cell-hide { display: none; }
+            /* Controles de formulario dentro de tarjetas */
+            table.cards-md td.cell-main .form-select,
+            table.cards-md td.cell-main .form-control { width: 100%; }
+            table.cards-md td[data-label] .form-control,
+            table.cards-md td[data-label] .form-select { width: auto; max-width: 62%; }
         }
 
         .badge-cat {
