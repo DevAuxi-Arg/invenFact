@@ -84,7 +84,16 @@
                             </span>
                             <span>
                                 <strong th:text="${u.nombre()}"></strong><br>
-                                <span class="text-muted" style="font-size:12px" th:text="${u.email()}"></span>
+                                <span class="text-muted" style="font-size:12px" th:text="${u.email()}"></span><br>
+                                <span th:if="${u.emailRecuperacion()}" class="text-muted" style="font-size:11px"
+                                      title="Email de recuperación">
+                                    <i class="bi bi-envelope-arrow-up"></i>
+                                    <span th:text="${u.emailRecuperacion()}"></span>
+                                </span>
+                                <span th:unless="${u.emailRecuperacion()}" class="text-muted fst-italic" style="font-size:11px"
+                                      title="Sin email de recuperación: se usa el de login">
+                                    <i class="bi bi-envelope"></i> recuperación: usa el de login
+                                </span>
                             </span>
                         </div>
                     </td>

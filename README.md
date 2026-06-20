@@ -171,10 +171,13 @@ El archivo `.env` está en `.gitignore`, así que las credenciales nunca se sube
 | `SEED_ADMIN_ENABLED` | `true` | Crea el ADMIN inicial si no hay usuarios. |
 | `SEED_ADMIN_EMAIL` | `admin@willysoft.com` | Email del ADMIN sembrado. |
 | `SEED_ADMIN_PASSWORD` | `Admin123!` | **Cambiar en producción.** Contraseña del ADMIN sembrado. |
+| `SEED_ADMIN_RECOVERY_EMAIL` | *(vacío)* | Email de recuperación del ADMIN sembrado. Útil cuando el email de login es ficticio. |
 | `MAIL_ENABLED` | `false` | Si es `false`, el enlace de reset se escribe en el log en vez de enviarse. |
-| `MAIL_FROM` | `no-reply@willysoft.com` | Remitente de los correos. |
+| `MAIL_FROM` | `no-reply@willysoft.com` | Remitente de los correos (con Gmail, usar la misma cuenta que `MAIL_USERNAME`). |
 | `RESET_EXP_MIN` | `30` | Vigencia del token de recuperación en minutos. |
-| `MAIL_HOST` / `MAIL_PORT` / `MAIL_USERNAME` / `MAIL_PASSWORD` | — | SMTP (descomentar el bloque `spring.mail.*` en `application.properties`). |
+| `MAIL_HOST` | `smtp.gmail.com` | Servidor SMTP. |
+| `MAIL_PORT` | `587` | Puerto SMTP (STARTTLS). |
+| `MAIL_USERNAME` / `MAIL_PASSWORD` | — | Credenciales SMTP. Con Gmail, usar una **contraseña de aplicación** (requiere verificación en 2 pasos). |
 
 > ⚠️ En producción, definí al menos `JWT_SECRET`, `SEED_ADMIN_PASSWORD` (o deshabilitá el seeder tras el primer arranque) y, si vas a enviar correos, las variables `MAIL_*`.
 
