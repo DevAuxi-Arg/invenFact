@@ -2,9 +2,9 @@
 
 <img src="./assets/header.png" alt="Productos API" style="display:block;margin:0 auto;max-width:100%;height:auto;" />
 <br>
-<div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+<div style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:nowrap;">
 <img src="./assets/productos-api.png" alt="Productos API" height="100px" />
-<h1>Productos API</h1>
+<h1 style="margin:0;">Productos API</h1>
 </div>
 <br>
 
