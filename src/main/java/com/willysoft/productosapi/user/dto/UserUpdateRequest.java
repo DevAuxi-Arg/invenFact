@@ -22,7 +22,6 @@ public record UserUpdateRequest(
         @NotNull(message = "El estado activo es obligatorio")
         Boolean activo,
 
-        @Size(max = 512, message = "La URL de la imagen no puede exceder 512 caracteres")
         String avatarUrl,
 
         @Email(message = "El email de recuperación no es válido")

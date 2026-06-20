@@ -42,7 +42,7 @@ public class User {
     private Role rol;
 
     /** URL de la imagen/avatar del usuario (opcional). */
-    @Column(length = 512)
+    @Column(columnDefinition = "TEXT")
     private String avatarUrl;
 
     /** Email alternativo para recibir el enlace de recuperación de contraseña (opcional).

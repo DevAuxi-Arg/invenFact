@@ -23,7 +23,6 @@ public record UserCreateRequest(
         @NotNull(message = "El rol es obligatorio")
         Role rol,
 
-        @Size(max = 512, message = "La URL de la imagen no puede exceder 512 caracteres")
         String avatarUrl,
 
         @Email(message = "El email de recuperación no es válido")
