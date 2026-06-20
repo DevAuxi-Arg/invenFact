@@ -465,7 +465,7 @@ En lugar de la *Whitelabel Error Page* de Spring, hay una plantilla `error.html`
 El **403** suele aparecer cuando la **sesión expira** (en el plan gratuito de Render la instancia se reinicia y pierde la sesión en memoria) o cuando un rol intenta acceder a una sección sin permiso.
 
 <div align="center">
- <img src="./assets/403.png" alt="preview" style="display:block;margin:0 auto;max-width:50%;height:auto;" />
+ <img src="./assets/403.png" alt="preview" style="display:block;margin:0 auto;max-width:20%;height:auto;" />
 </div>
 
 ---

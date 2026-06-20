@@ -104,7 +104,7 @@
                 <div class="card-body">
                     <h2 class="h6 mb-3"><i class="bi bi-trophy me-1"></i> Productos más vendidos</h2>
                     <div class="table-responsive">
-                        <table class="table app-table mb-0">
+                        <table class="table app-table mb-0 cards-md">
                             <thead>
                             <tr><th>#</th><th>Producto</th><th class="text-end">Unid.</th><th class="text-end">Total (ARS)</th></tr>
                             </thead>
@@ -113,10 +113,13 @@
                                 <td colspan="4" class="text-muted text-center py-3">Sin ventas todavía.</td>
                             </tr>
                             <tr th:each="p, it : ${topProductos}">
-                                <td><span class="rank-num" th:text="${it.count}"></span></td>
-                                <td th:text="${p.nombre()}"></td>
-                                <td class="text-end" th:text="${p.cantidad()}"></td>
-                                <td class="text-end fw-semibold"
+                                <td class="cell-hide"><span class="rank-num" th:text="${it.count}"></span></td>
+                                <td class="cell-main">
+                                    <span class="rank-num d-md-none me-2" th:text="${it.count}"></span>
+                                    <strong th:text="${p.nombre()}"></strong>
+                                </td>
+                                <td class="text-end" data-label="Unid." th:text="${p.cantidad()}"></td>
+                                <td class="text-end fw-semibold" data-label="Total (ARS)"
                                     th:text="${'$' + #numbers.formatDecimal(p.total(), 1, 'COMMA', 2, 'POINT')}"></td>
                             </tr>
                             </tbody>
@@ -132,7 +135,7 @@
                 <div class="card-body">
                     <h2 class="h6 mb-3"><i class="bi bi-people me-1"></i> Mejores clientes</h2>
                     <div class="table-responsive">
-                        <table class="table app-table mb-0">
+                        <table class="table app-table mb-0 cards-md">
                             <thead>
                             <tr><th>#</th><th>Cliente</th><th class="text-end">Facturas</th><th class="text-end">Total (ARS)</th></tr>
                             </thead>
@@ -141,10 +144,13 @@
                                 <td colspan="4" class="text-muted text-center py-3">Sin ventas todavía.</td>
                             </tr>
                             <tr th:each="c, it : ${topClientes}">
-                                <td><span class="rank-num" th:text="${it.count}"></span></td>
-                                <td th:text="${c.nombre()}"></td>
-                                <td class="text-end" th:text="${c.cantidadFacturas()}"></td>
-                                <td class="text-end fw-semibold"
+                                <td class="cell-hide"><span class="rank-num" th:text="${it.count}"></span></td>
+                                <td class="cell-main">
+                                    <span class="rank-num d-md-none me-2" th:text="${it.count}"></span>
+                                    <strong th:text="${c.nombre()}"></strong>
+                                </td>
+                                <td class="text-end" data-label="Facturas" th:text="${c.cantidadFacturas()}"></td>
+                                <td class="text-end fw-semibold" data-label="Total (ARS)"
                                     th:text="${'$' + #numbers.formatDecimal(c.total(), 1, 'COMMA', 2, 'POINT')}"></td>
                             </tr>
                             </tbody>
