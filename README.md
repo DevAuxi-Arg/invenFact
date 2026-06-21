@@ -1,12 +1,12 @@
 <div align="center">
-
-<table align="center">
-  <tr>
-    <td valign="middle"><img src="./assets/header.png" alt="invenFact" width="230"></td>
-    <td valign="middle"><img src="./assets/productos-api.png" alt="Productos API" height="95"></td>
-  </tr>
-</table>
-
+<img src="./assets/header.png" alt="Productos API" style="display:block;margin:0 auto;max-width:100%;height:auto;" />
+<div style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:nowrap;">
+</div>
+<br><br>
+<div style="display:flex;align-items:center;justify-content:center;gap:15px;">
+<img src="./assets/productos-api.png" alt="Productos API" height="100px" />
+<h1 style="margin:0;">Productos API</h1>
+</div>
 <br>
 
 **Sistema full-stack de gestión de productos, categorías y usuarios** con Spring Boot 4, PostgreSQL y arquitectura en capas.
