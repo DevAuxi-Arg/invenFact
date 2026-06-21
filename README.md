@@ -58,7 +58,7 @@ Doble interfaz sobre la misma lógica de negocio: **UI web** con Thymeleaf + Boo
 <!-- Estado del proyecto -->
 
 <img src="https://img.shields.io/badge/Tests-58%20passing-4CAF50?style=for-the-badge&logo=junit5&logoColor=white&labelColor=1B3A2D" alt="Tests"/>
-  <img src="https://img.shields.io/badge/Build-passing-4CAF50?style=for-the-badge&logo=apachemaven&logoColor=white&labelColor=1B3A2D" alt="Build"/>
+  <a href="https://github.com/DevAuxi-Arg/invenFact/actions/workflows/ci.yml"><img src="https://github.com/DevAuxi-Arg/invenFact/actions/workflows/ci.yml/badge.svg" alt="CI"/></a>
   <img src="https://img.shields.io/badge/Arquitectura-MVC%20%2B%20Capas-2196F3?style=for-the-badge&labelColor=0A1A3D" alt="Arquitectura"/>
   <img src="https://img.shields.io/badge/Licencia-Educativa-9C27B0?style=for-the-badge&labelColor=1F0A2E" alt="Licencia"/>
 </p>

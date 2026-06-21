@@ -116,6 +116,7 @@ public class ProductService {
                 .precio(request.precio())
                 .moneda(monedaOrDefault(request.moneda()))
                 .stock(request.stock())
+                .stockMinimo(request.stockMinimo() != null ? request.stockMinimo() : 0)
                 .categoria(categoria)
                 .build();
         return toResponse(productRepository.save(product));
@@ -131,6 +132,7 @@ public class ProductService {
         product.setPrecio(request.precio());
         product.setMoneda(monedaOrDefault(request.moneda()));
         product.setStock(request.stock());
+        product.setStockMinimo(request.stockMinimo() != null ? request.stockMinimo() : 0);
         product.setCategoria(categoria);
         return toResponse(productRepository.save(product));
     }
@@ -187,6 +189,8 @@ public class ProductService {
         CategoryResponse categoria = new CategoryResponse(
                 c.getId(), c.getNombre(), c.getDescripcion(), c.getAlicuotaIva(), c.getIconoUrl());
         PriceBreakdown precio = priceCalculationService.calcular(product);
+        Integer stockMin = product.getStockMinimo();
+        boolean stockBajo = stockMin != null && stockMin > 0 && product.getStock() <= stockMin;
         return new ProductResponse(
                 product.getId(),
                 product.getNombre(),
@@ -197,7 +201,9 @@ public class ProductService {
                 categoria,
                 precio.precioFinalArs(),
                 precio.precioFinalUsd(),
-                product.getImagenUrl()
+                product.getImagenUrl(),
+                stockMin,
+                stockBajo
         );
     }
 }

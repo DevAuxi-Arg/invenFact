@@ -35,8 +35,8 @@ class PriceCalculationServiceTest {
         assertThat(b.netoArs()).isEqualByComparingTo("100.00");
         assertThat(b.ivaMontoArs()).isEqualByComparingTo("21.00");
         assertThat(b.precioFinalArs()).isEqualByComparingTo("121.00");
-        // 121 / 1000 = 0.121 -> 0.12
-        assertThat(b.precioFinalUsd()).isEqualByComparingTo("0.12");
+        // Un producto cargado en pesos no lleva precio en USD (queda null).
+        assertThat(b.precioFinalUsd()).isNull();
     }
 
     @Test

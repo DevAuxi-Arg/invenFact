@@ -189,6 +189,11 @@
                                 <i class="bi bi-sliders"></i>
                             </button>
                         </div>
+                        <div th:if="${p.stockBajo()}" class="mt-1">
+                            <span class="badge text-bg-danger" title="El stock llegó al mínimo definido">
+                                <i class="bi bi-exclamation-triangle-fill"></i> Stock bajo
+                            </span>
+                        </div>
                     </td>
                     <td class="text-end cell-actions">
                         <a th:href="@{/productos/{id}/editar(id=${p.id()})}"

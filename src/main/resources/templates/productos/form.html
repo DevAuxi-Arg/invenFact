@@ -93,7 +93,7 @@
                         </select>
                     </div>
 
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-2 mb-3">
                         <label for="stock" class="form-label">
                             Stock <span class="text-danger">*</span>
                         </label>
@@ -102,6 +102,16 @@
                                th:classappend="${#fields.hasErrors('stock')} ? 'is-invalid'">
                         <div class="invalid-feedback" th:if="${#fields.hasErrors('stock')}"
                              th:errors="*{stock}"></div>
+                    </div>
+
+                    <div class="col-md-2 mb-3">
+                        <label for="stockMinimo" class="form-label">Stock mín.</label>
+                        <input type="number" id="stockMinimo" class="form-control" min="0"
+                               th:field="*{stockMinimo}"
+                               th:classappend="${#fields.hasErrors('stockMinimo')} ? 'is-invalid'">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('stockMinimo')}"
+                             th:errors="*{stockMinimo}"></div>
+                        <div class="form-text">Avisa cuando el stock baja a este valor (0 = sin aviso).</div>
                     </div>
                 </div>
 

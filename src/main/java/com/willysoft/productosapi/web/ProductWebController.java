@@ -136,7 +136,7 @@ public class ProductWebController {
             var p = productService.findById(id);
             model.addAttribute("producto",
                     new ProductRequest(p.nombre(), p.descripcion(), p.precio(), p.stock(),
-                            p.categoria().id(), p.moneda(), p.imagenUrl()));
+                            p.categoria().id(), p.moneda(), p.imagenUrl(), p.stockMinimo()));
             model.addAttribute("categorias", categoryService.findAll());
             model.addAttribute("monedas", Moneda.values());
             model.addAttribute("id", id);

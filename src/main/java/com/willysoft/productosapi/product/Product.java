@@ -54,6 +54,11 @@ public class Product {
     @Column(nullable = false)
     private Integer stock;
 
+    /** Umbral de stock bajo: si stock <= stockMinimo (y > 0), se marca alerta. */
+    @Builder.Default
+    @Column(name = "stock_minimo", columnDefinition = "integer default 0")
+    private Integer stockMinimo = 0;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "categoria_id", nullable = false)
     private Category categoria;

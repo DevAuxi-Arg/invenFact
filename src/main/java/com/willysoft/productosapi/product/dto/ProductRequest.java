@@ -31,6 +31,14 @@ public record ProductRequest(
 
         Moneda moneda,
 
-        String imagenUrl
+        String imagenUrl,
+
+        @PositiveOrZero(message = "El stock mínimo no puede ser negativo")
+        Integer stockMinimo
 ) {
+    /** Compatibilidad: alta/edición sin stock mínimo (se asume 0). */
+    public ProductRequest(String nombre, String descripcion, BigDecimal precio, Integer stock,
+                          Long categoriaId, Moneda moneda, String imagenUrl) {
+        this(nombre, descripcion, precio, stock, categoriaId, moneda, imagenUrl, 0);
+    }
 }
