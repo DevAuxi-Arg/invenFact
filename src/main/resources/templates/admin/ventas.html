@@ -24,18 +24,23 @@
         /* Evita que el número largo desborde la tarjeta (clave para el responsive) */
         .kpi-card > div:last-child { min-width: 0; }
         @media (max-width: 575.98px) {
-            /* Fila 1: número a todo el ancho. Fila 2: ícono al lado del nombre. */
+            /* Grid: fila 1 = número (ancho completo). Fila 2 = ícono | nombre (el nombre
+               se parte en 2 líneas al lado del ícono, sin apilarse debajo). */
             .kpi-card {
-                flex-wrap: wrap;
+                display: grid;
+                grid-template-columns: auto 1fr;
+                grid-template-areas:
+                    "value value"
+                    "icon  label";
                 align-items: center;
-                justify-content: center;
-                gap: 0.45rem 0.55rem;
+                column-gap: 0.55rem;
+                row-gap: 0.4rem;
                 padding: 0.8rem 0.9rem;
             }
             .kpi-card > div:not(.kpi-icon) { display: contents; }  /* aplana el bloque de texto */
-            .kpi-value { order: 1; width: 100%; font-size: 1rem; text-align: center; }
-            .kpi-icon  { order: 2; width: 40px; height: 40px; font-size: 19px; }
-            .kpi-label { order: 3; margin-top: 0; font-size: 11px; }
+            .kpi-value { grid-area: value; font-size: 1rem; text-align: center; }
+            .kpi-icon  { grid-area: icon; width: 40px; height: 40px; font-size: 19px; }
+            .kpi-label { grid-area: label; margin-top: 0; font-size: 11px; line-height: 1.2; }
         }
     </style>
 
