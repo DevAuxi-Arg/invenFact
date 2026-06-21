@@ -919,6 +919,12 @@
                         <i class="bi bi-box" aria-hidden="true"></i> Productos
                     </a>
                 </li>
+                <!-- Solo en mobile: en desktop la barra ya no tiene lugar -->
+                <li class="nav-item d-lg-none">
+                    <a class="nav-link nav-productos" data-section="catalogo" th:href="@{/productos/catalogo}">
+                        <i class="bi bi-cash-stack" aria-hidden="true"></i> Lista de precios
+                    </a>
+                </li>
                 <li class="nav-item" th:if="${currentEmail != null}">
                     <a class="nav-link nav-categorias" data-section="clientes" th:href="@{/clientes}">
                         <i class="bi bi-person-vcard" aria-hidden="true"></i> Clientes
