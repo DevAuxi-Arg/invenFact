@@ -111,7 +111,7 @@
                                th:classappend="${#fields.hasErrors('stockMinimo')} ? 'is-invalid'">
                         <div class="invalid-feedback" th:if="${#fields.hasErrors('stockMinimo')}"
                              th:errors="*{stockMinimo}"></div>
-                        <div class="form-text">Avisa cuando el stock baja a este valor (0 = sin aviso).</div>
+                        <div class="form-text">Avisa cuando el stock baja a este valor. <strong>0</strong> = usa el de la categoría o el global.</div>
                     </div>
                 </div>
 

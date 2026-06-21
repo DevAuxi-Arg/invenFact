@@ -88,6 +88,20 @@
                     <div class="form-text">21 % general · 10,5 % reducido · 0 % exento. Determina el IVA de los productos de esta categoría.</div>
                 </div>
 
+                <div class="mb-4">
+                    <label for="stockMinimo" class="form-label">Stock mínimo de la categoría</label>
+                    <input type="number" id="stockMinimo" class="form-control" min="0"
+                           style="max-width: 220px;"
+                           th:field="*{stockMinimo}"
+                           th:classappend="${#fields.hasErrors('stockMinimo')} ? 'is-invalid'">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('stockMinimo')}"
+                         th:errors="*{stockMinimo}"></div>
+                    <div class="form-text">
+                        Avisa cuando un producto de esta categoría baja a este stock.
+                        <strong>0</strong> = usa el mínimo global. El mínimo definido en cada producto tiene prioridad sobre este.
+                    </div>
+                </div>
+
                 <div class="d-flex justify-content-between">
                     <a th:href="@{/categorias}" class="btn btn-outline-secondary">
                         <i class="bi bi-arrow-left"></i> Cancelar

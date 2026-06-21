@@ -61,6 +61,16 @@ public class DataSeeder implements CommandLineRunner {
                     .build());
             log.warn("==> Parámetro DOLAR inicial creado con valor 1.00 (actualizalo en /admin/parametros)");
         }
+        if (!parametroRepository.existsById(ParametroService.STOCK_MINIMO)) {
+            parametroRepository.save(Parametro.builder()
+                    .clave(ParametroService.STOCK_MINIMO)
+                    .valor("0")
+                    .descripcion("Stock mínimo global: avisa si el stock baja a este valor (0 = sin aviso)")
+                    .fechaActualizacion(LocalDateTime.now())
+                    .actualizadoPor("seeder")
+                    .build());
+            log.warn("==> Parámetro STOCK_MINIMO inicial creado con valor 0 (configuralo en /admin/parametros)");
+        }
     }
 
     private void seedAdmin() {

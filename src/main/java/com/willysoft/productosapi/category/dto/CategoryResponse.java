@@ -7,6 +7,11 @@ public record CategoryResponse(
         String nombre,
         String descripcion,
         BigDecimal alicuotaIva,
-        String iconoUrl
+        String iconoUrl,
+        Integer stockMinimo
 ) {
+    /** Compatibilidad: respuesta sin stock mínimo de categoría. */
+    public CategoryResponse(Long id, String nombre, String descripcion, BigDecimal alicuotaIva, String iconoUrl) {
+        this(id, nombre, descripcion, alicuotaIva, iconoUrl, 0);
+    }
 }

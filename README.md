@@ -96,6 +96,7 @@ Doble interfaz sobre la misma lógica de negocio: **UI web** con Thymeleaf + Boo
         <li>👥 <strong>Clientes</strong>: con condición frente al IVA (responsable inscripto, monotributo, <strong>exento</strong>, consumidor final). Si el cliente es exento, la factura no cobra IVA. Se pueden dar de alta directamente al facturar.</li>
         <li>📊 <strong>Dashboard de ventas</strong>: KPIs (total facturado, ventas del mes, ticket promedio, IVA), gráfico de ventas por mes y rankings de productos y clientes.</li>
         <li>🏷️ <strong>Catálogo visual y lista de precios</strong>: cada producto puede llevar imagen y cada categoría un ícono; la vista <strong>lista de precios</strong> agrupa por categoría (corte de control) mostrando el precio final en ARS y USD.</li>
+        <li>📦 <strong>Control de stock</strong>: ajuste rápido (+/−/valor exacto) y <strong>alerta de stock bajo en cascada</strong> — el umbral se resuelve por prioridad <strong>producto → categoría → global</strong> (gana el más específico) y muestra un aviso cuando el stock llega al mínimo.</li>
       </ul>
       Implementa el patrón <strong>MVC</strong> sobre una <strong>arquitectura en 4 capas</strong> (Controller → Service → Repository → Entity), con DTOs como contrato de entrada/salida, <strong>Bean Validation</strong>, <strong>JPA Specifications</strong> para búsquedas combinadas, paginación nativa de Spring Data, manejo global de excepciones y <strong>58 tests automatizados</strong> que cubren repositorios, servicios y controllers REST.
     </td>
@@ -525,7 +526,7 @@ curl http://localhost:8080/api/usuarios/me -H "Authorization: Bearer $TOKEN"
 
 ### Categorías — `/api/categorias`
 
-> El request/response de categoría incluye `alicuotaIva` (porcentaje de IVA; default 21 si se omite) e `iconoUrl` (URL opcional de un ícono PNG/SVG/GIF de la categoría).
+> El request/response de categoría incluye `alicuotaIva` (porcentaje de IVA; default 21 si se omite), `iconoUrl` (URL opcional de un ícono PNG/SVG/GIF) y `stockMinimo` (umbral de stock bajo de la categoría; default 0 = hereda el global).
 
 | Método | Path                     | Descripción                             | Códigos           |
 | ------- | ------------------------ | ---------------------------------------- | ------------------ |
@@ -548,7 +549,19 @@ curl http://localhost:8080/api/usuarios/me -H "Authorization: Bearer $TOKEN"
 | PUT     | `/api/productos/{id}`        | Actualizar producto                                     | 200, 400, 404 |
 | DELETE  | `/api/productos/{id}`        | Eliminar producto                                       | 204, 404      |
 
-> El request incluye `moneda` (`ARS` | `USD`; default `ARS`) e `imagenUrl` (URL opcional de la imagen del producto). El response agrega `moneda`, `precioFinalArs`, `precioFinalUsd` (calculados con el IVA de la categoría y el dólar vigente) e `imagenUrl`.
+> El request incluye `moneda` (`ARS` | `USD`; default `ARS`), `imagenUrl` (URL opcional de la imagen) y `stockMinimo` (umbral del producto; default `0`). El response agrega `moneda`, `precioFinalArs`, `precioFinalUsd` (calculados con el IVA de la categoría y el dólar vigente), `imagenUrl`, `stockMinimo` y `stockBajo`.
+
+#### Alerta de stock bajo (umbral en cascada)
+
+El campo `stockBajo` es `true` cuando `stock <= mínimo efectivo` (y el mínimo es > 0). El **mínimo efectivo** se resuelve por prioridad, ganando el más específico:
+
+| Prioridad | Nivel | Dónde se configura |
+| --- | --- | --- |
+| 1º | **Producto** | `stockMinimo` del producto |
+| 2º | **Categoría** | `stockMinimo` de la categoría (si el del producto es 0) |
+| 3º | **Global** | parámetro `STOCK_MINIMO` (si producto y categoría son 0) |
+
+En cada nivel, **`0` significa "heredar del nivel inferior"**. Si los tres son 0, no hay alerta. En la lista de productos, los que están por debajo del mínimo muestran un badge **«Stock bajo»**.
 
 ### Ventas — `/api/ventas` *(requiere JWT)*
 
@@ -659,6 +672,7 @@ erDiagram
         string  nombre UK
         string  descripcion
         decimal alicuota_iva "IVA %"
+        int     stock_minimo "umbral de la categoría (0 = hereda global)"
         text    icono_url "URL ícono (opcional)"
     }
     PRODUCTO {
@@ -668,6 +682,7 @@ erDiagram
         decimal precio
         enum    moneda "ARS|USD"
         int     stock
+        int     stock_minimo "umbral del producto (0 = hereda categoría/global)"
         text    imagen_url "URL imagen (opcional)"
         bigint  categoria_id FK
     }
@@ -685,7 +700,7 @@ erDiagram
         datetime fecha_creacion
     }
     PARAMETRO {
-        string   clave PK "ej. DOLAR"
+        string   clave PK "ej. DOLAR, STOCK_MINIMO"
         string   valor
         string   descripcion
         datetime fecha_actualizacion
@@ -988,6 +1003,7 @@ Organización **por feature** (un paquete por dominio), sobre la arquitectura en
   - `precio`: obligatorio, ≥ 0, máx. 10 enteros y 2 decimales
   - `moneda`: opcional (default `ARS`), valores `ARS` | `USD`
   - `stock`: obligatorio, ≥ 0
+  - `stockMinimo`: opcional (default `0`), ≥ 0 — umbral de **alerta de stock bajo**
   - `imagenUrl`: opcional, URL de la imagen (columna `TEXT`, sin límite de longitud)
   - `categoriaId`: obligatorio, debe existir
 
@@ -1002,6 +1018,10 @@ Organización **por feature** (un paquete por dominio), sobre la arquitectura en
 **Cobertura actual: 58 tests, todos en verde.**
 
 Los tests usan **H2 en memoria** (no tocan tu Postgres real). Spring Boot detecta automáticamente que está corriendo en perfil de test y usa `src/test/resources/application.properties`.
+
+### Integración continua (CI)
+
+Cada **push** y **pull request** a `main` dispara un workflow de **GitHub Actions** ([.github/workflows/ci.yml](.github/workflows/ci.yml)) que levanta JDK 17 y corre los 58 tests. El badge **CI** del encabezado refleja el estado real del último build (verde = pasan). Como los tests usan H2, el CI no necesita base de datos ni secretos.
 
 ### Categorías de tests
 

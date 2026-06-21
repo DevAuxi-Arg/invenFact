@@ -32,6 +32,9 @@ class ProductServiceTest {
     @Mock
     private PriceCalculationService priceCalculationService;
 
+    @Mock
+    private com.willysoft.productosapi.parametro.ParametroService parametroService;
+
     @InjectMocks
     private ProductService service;
 

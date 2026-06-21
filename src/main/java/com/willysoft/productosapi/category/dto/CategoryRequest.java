@@ -4,6 +4,7 @@ import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 
@@ -20,6 +21,13 @@ public record CategoryRequest(
         @Digits(integer = 3, fraction = 2, message = "La alícuota debe tener máximo 3 enteros y 2 decimales")
         BigDecimal alicuotaIva,
 
-        String iconoUrl
+        String iconoUrl,
+
+        @PositiveOrZero(message = "El stock mínimo no puede ser negativo")
+        Integer stockMinimo
 ) {
+    /** Compatibilidad: alta/edición sin stock mínimo de categoría (se asume 0). */
+    public CategoryRequest(String nombre, String descripcion, BigDecimal alicuotaIva, String iconoUrl) {
+        this(nombre, descripcion, alicuotaIva, iconoUrl, 0);
+    }
 }

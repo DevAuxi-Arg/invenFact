@@ -19,6 +19,9 @@ public class ParametroService {
     /** Clave del parámetro con la cotización del dólar (ARS por USD). */
     public static final String DOLAR = "DOLAR";
 
+    /** Clave del parámetro con el stock mínimo global (umbral de alerta; 0 = sin aviso). */
+    public static final String STOCK_MINIMO = "STOCK_MINIMO";
+
     private final ParametroRepository parametroRepository;
     private final AuditService auditService;
 
@@ -38,6 +41,20 @@ public class ParametroService {
         return getDecimal(DOLAR);
     }
 
+    /** Stock mínimo global (0 = sin aviso). Devuelve 0 si no está definido o es inválido. */
+    @Transactional(readOnly = true)
+    public int getStockMinimoGlobal() {
+        return parametroRepository.findById(STOCK_MINIMO)
+                .map(p -> {
+                    try {
+                        return Math.max(0, Integer.parseInt(p.getValor().trim()));
+                    } catch (NumberFormatException e) {
+                        return 0;
+                    }
+                })
+                .orElse(0);
+    }
+
     @Transactional(readOnly = true)
     public BigDecimal getDecimal(String clave) {
         try {
@@ -52,6 +69,8 @@ public class ParametroService {
         Parametro parametro = getOrThrow(clave);
         if (DOLAR.equals(clave)) {
             validarDecimalPositivo(valor);
+        } else if (STOCK_MINIMO.equals(clave)) {
+            validarEnteroNoNegativo(valor);
         }
         parametro.setValor(valor);
         parametro.setFechaActualizacion(LocalDateTime.now());
@@ -70,6 +89,18 @@ public class ParametroService {
         }
         if (bd.signum() <= 0) {
             throw new ConflictException("El valor debe ser mayor que cero");
+        }
+    }
+
+    private void validarEnteroNoNegativo(String valor) {
+        int n;
+        try {
+            n = Integer.parseInt(valor.trim());
+        } catch (NumberFormatException e) {
+            throw new ConflictException("El valor debe ser un número entero (ej. 5)");
+        }
+        if (n < 0) {
+            throw new ConflictException("El valor no puede ser negativo");
         }
     }
 

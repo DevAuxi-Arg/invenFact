@@ -40,4 +40,9 @@ public class Category {
     @Builder.Default
     @Column(name = "alicuota_iva", columnDefinition = "numeric(5,2) default 21.00 not null")
     private BigDecimal alicuotaIva = new BigDecimal("21.00");
+
+    /** Stock mínimo de la categoría (0 = sin override; usa el global). */
+    @Builder.Default
+    @Column(name = "stock_minimo", columnDefinition = "integer default 0")
+    private Integer stockMinimo = 0;
 }

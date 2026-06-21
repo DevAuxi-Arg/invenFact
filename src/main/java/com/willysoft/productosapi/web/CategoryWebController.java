@@ -70,7 +70,8 @@ public class CategoryWebController {
     public String editForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
             var c = categoryService.findById(id);
-            model.addAttribute("categoria", new CategoryRequest(c.nombre(), c.descripcion(), c.alicuotaIva(), c.iconoUrl()));
+            model.addAttribute("categoria",
+                    new CategoryRequest(c.nombre(), c.descripcion(), c.alicuotaIva(), c.iconoUrl(), c.stockMinimo()));
             model.addAttribute("id", id);
             model.addAttribute("modo", "editar");
             return "categorias/form";

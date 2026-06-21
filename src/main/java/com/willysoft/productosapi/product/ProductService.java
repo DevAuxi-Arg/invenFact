@@ -5,6 +5,7 @@ import com.willysoft.productosapi.category.CategoryService;
 import com.willysoft.productosapi.category.dto.CategoryResponse;
 import com.willysoft.productosapi.exception.ConflictException;
 import com.willysoft.productosapi.exception.ResourceNotFoundException;
+import com.willysoft.productosapi.parametro.ParametroService;
 import com.willysoft.productosapi.product.dto.CategoriaProductos;
 import com.willysoft.productosapi.product.dto.PriceBreakdown;
 import com.willysoft.productosapi.product.dto.ProductRequest;
@@ -32,6 +33,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
     private final PriceCalculationService priceCalculationService;
+    private final ParametroService parametroService;
 
     /** Campos calculados (no existen en la base): se ordenan en memoria. */
     private static final Set<String> SORTS_CALCULADOS = Set.of("precioFinalArs", "precioFinalUsd");
@@ -187,10 +189,13 @@ public class ProductService {
     private ProductResponse toResponse(Product product) {
         Category c = product.getCategoria();
         CategoryResponse categoria = new CategoryResponse(
-                c.getId(), c.getNombre(), c.getDescripcion(), c.getAlicuotaIva(), c.getIconoUrl());
+                c.getId(), c.getNombre(), c.getDescripcion(), c.getAlicuotaIva(), c.getIconoUrl(), c.getStockMinimo());
         PriceBreakdown precio = priceCalculationService.calcular(product);
-        Integer stockMin = product.getStockMinimo();
-        boolean stockBajo = stockMin != null && stockMin > 0 && product.getStock() <= stockMin;
+        // Stock mínimo efectivo: producto > categoría > global (gana el más específico).
+        int prodMin = product.getStockMinimo() != null ? product.getStockMinimo() : 0;
+        int catMin = c.getStockMinimo() != null ? c.getStockMinimo() : 0;
+        int efectivo = prodMin > 0 ? prodMin : (catMin > 0 ? catMin : parametroService.getStockMinimoGlobal());
+        boolean stockBajo = efectivo > 0 && product.getStock() <= efectivo;
         return new ProductResponse(
                 product.getId(),
                 product.getNombre(),
@@ -202,7 +207,7 @@ public class ProductService {
                 precio.precioFinalArs(),
                 precio.precioFinalUsd(),
                 product.getImagenUrl(),
-                stockMin,
+                product.getStockMinimo(),
                 stockBajo
         );
     }

@@ -47,6 +47,7 @@ public class CategoryService {
                 .descripcion(request.descripcion())
                 .iconoUrl(request.iconoUrl())
                 .alicuotaIva(alicuotaOrDefault(request.alicuotaIva()))
+                .stockMinimo(request.stockMinimo() != null ? request.stockMinimo() : 0)
                 .build();
         return toResponse(categoryRepository.save(category));
     }
@@ -62,6 +63,7 @@ public class CategoryService {
         category.setDescripcion(request.descripcion());
         category.setIconoUrl(request.iconoUrl());
         category.setAlicuotaIva(alicuotaOrDefault(request.alicuotaIva()));
+        category.setStockMinimo(request.stockMinimo() != null ? request.stockMinimo() : 0);
         return toResponse(categoryRepository.save(category));
     }
 
@@ -90,7 +92,8 @@ public class CategoryService {
                 category.getNombre(),
                 category.getDescripcion(),
                 category.getAlicuotaIva(),
-                category.getIconoUrl()
+                category.getIconoUrl(),
+                category.getStockMinimo()
         );
     }
 }
