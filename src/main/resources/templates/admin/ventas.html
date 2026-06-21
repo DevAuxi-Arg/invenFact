@@ -24,8 +24,8 @@
         /* En mobile (tarjetas): el nombre se parte en 2 líneas con sangría correcta,
            alineado bajo sí mismo y no bajo el número del puesto. */
         @media (max-width: 767.98px) {
-            .cards-md td.cell-main { display: flex; align-items: baseline; gap: 4px; }
-            .cards-md td.cell-main > .rank-num { flex: none; }
+            .cards-md td.cell-main { display: flex !important; align-items: baseline; gap: 6px; }
+            .cards-md td.cell-main > .rank-num { flex: none; width: auto; }
             .cards-md td.cell-main > strong { flex: 1; min-width: 0; }
         }
         /* Evita que el número largo desborde la tarjeta (clave para el responsive) */
