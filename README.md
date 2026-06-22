@@ -80,6 +80,7 @@ Doble interfaz sobre la misma lógica de negocio: **UI web** con Thymeleaf + Boo
 
 ---
 
+
 <table>
   <tr>
     <td valign="middle" width="140" align="center">
