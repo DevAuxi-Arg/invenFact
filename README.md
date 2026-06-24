@@ -24,9 +24,19 @@ Doble interfaz sobre la misma lógica de negocio: **UI web** con Thymeleaf + Boo
 <br/>
 
 <!-- Demo en vivo -->
+<div align="center">
 
+🎬 **[Video de Presentación](https://youtu.be/pksALzdYKks)**
+  <div class="video-embed" style="position:relative;max-width:600px;width:100%;margin:0 auto;background-image:url('./src/main/resources/static/img/og-preview.jpg');background-size:contain;background-position:center;background-repeat:no-repeat;padding-top:56.25%;border-radius:8px;overflow:hidden;box-shadow:0 4px 8px rgba(0,0,0,0.1);">
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;">
+      <div style="font-size:48px;color:white;text-shadow:0 2px 4px rgba(0,0,0,0.5);">▶️</div>
+    </div>
+    <iframe src="https://www.youtube.com/embed/pksALzdYKks" title="🎬 Video de presentación" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen></iframe>
+  </div>
+</div>
+<br>
 <p align="center">
-  <a href="https://invenfact.onrender.com">
+  <a href="https://invenfact.onrender.com" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/badge/🌐_Ver_demo_en_vivo-invenfact.onrender.com-7c3aed?style=for-the-badge&labelColor=4c1d95" alt="Demo en vivo"/>
   </a>
 </p>
@@ -76,9 +86,12 @@ Doble interfaz sobre la misma lógica de negocio: **UI web** con Thymeleaf + Boo
   <a href="#tests"><b>🧪 Tests</b></a>
 </p>
 
+
+
 </div>
 
 ---
+
 
 
 <table>
