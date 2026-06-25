@@ -29,6 +29,7 @@ Doble interfaz sobre la misma lógica de negocio: **UI web** con Thymeleaf + Boo
 🎬 **[Video de Presentación](https://youtu.be/REhXbxeuEP0)**
 
   <img src="./assets/preview-yt.png" alt="Java 17"/>
+  <img src="./assets/invenFACT-YT.png" alt="Java 17"/>
 
 </div>
 <br>
@@ -1097,3 +1098,9 @@ En Spring Boot 4 algunos paquetes de test se reorganizaron:
 *"Cada clase cuenta una historia de diseño, escalabilidad y aprendizaje."*
 
 <br>
+
+<div align="center">
+
+  <img src="./assets/invenFACT-YT.png" alt="Java 17"/>
+
+</div>
