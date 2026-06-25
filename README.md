@@ -26,12 +26,12 @@ Doble interfaz sobre la misma lógica de negocio: **UI web** con Thymeleaf + Boo
 <!-- Demo en vivo -->
 <div align="center">
 
-🎬 **[Video de Presentación](https://youtu.be/REhXbxeuEP0)**
+🎬 **[Video de Presentación](https://youtu.be/PRmk8X6ARjc)**
 
 <table>
   <tr>
     <td width="50%">
-        <a href="https://youtu.be/REhXbxeuEP0">
+        <a href="https://youtu.be/PRmk8X6ARjc">
           <img src="./assets/preview-yt.png"   alt="Preview"/>
         </a>
     </td>
