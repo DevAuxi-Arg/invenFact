@@ -26,7 +26,7 @@ Doble interfaz sobre la misma lógica de negocio: **UI web** con Thymeleaf + Boo
 <!-- Demo en vivo -->
 <div align="center">
 
-🎬 **[Video de Presentación](https://youtu.be/pksALzdYKks)**
+🎬 **[Video de Presentación](https://youtu.be/REhXbxeuEP0)**
 
   <img src="./assets/preview-yt.png" alt="Java 17"/>
 
