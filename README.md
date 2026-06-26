@@ -30,14 +30,19 @@ Doble interfaz sobre la misma lógica de negocio: **UI web** con Thymeleaf + Boo
 
 <table>
   <tr>
-    <td width="50%">
+    <td width="33%">
         <a href="https://youtu.be/cen4E9kXEm4">
           <img src="./assets/preview-yt.png"   alt="Preview"/>
         </a>
     </td>
-    <td width="50%">
+    <td width="33%">
       <a href="https://youtu.be/cen4E9kXEm4">
         <img src="./assets/invenFACT-YT.png"  alt="YouTube"/>
+      </a>
+    </td>
+        <td width="33%">
+      <a href="https://youtu.be/cen4E9kXEm4">
+        <img src="./assets/promo.png"  alt="YouTube"/>
       </a>
     </td>
   </tr>
@@ -1113,6 +1118,6 @@ En Spring Boot 4 algunos paquetes de test se reorganizaron:
 
 <div align="center">
 
-  <img src="./assets/invenFACT-YT.png" alt="Java 17"/>
+  <img src="./assets/landing-wide.png" alt="Java 17"/>
 
 </div>
