@@ -10,15 +10,15 @@
 <br>
 
 **Sistema full-stack de gestión de productos, categorías y usuarios** con Spring Boot 4, PostgreSQL y arquitectura en capas.
-`<br/>`
+<br>
 Doble interfaz sobre la misma lógica de negocio: **UI web** con Thymeleaf + Bootstrap y **API REST** documentada con Swagger.
-`<br/>`
+<br/>
 **Autenticación con Spring Security** — JWT para la API y sesión para la web, con **3 roles** (ADMIN, CO-ADMIN, BACKOFFICE) y dashboard de administración.
-`<br/>`
+<br/>
 **IVA por categoría y multimoneda** (ARS / USD) — el precio final se calcula al momento con la cotización del dólar parametrizable por el admin.
-`<br/>`
+<br/>
 **Facturación con snapshot** — al emitir, la factura congela precio, tipo de cambio, IVA y totales, y descuenta stock.
-`<br/>`
+<br/>
 **Clientes** — con condición de IVA (incl. exento); se pueden dar de alta desde la propia facturación.
 
 <br/>
