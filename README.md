@@ -11,7 +11,7 @@
 
 **Sistema full-stack de gestión de productos, categorías y usuarios**<br> con Spring Boot 4, PostgreSQL y arquitectura en capas.
 <br>
-Doble interfaz sobre la misma lógica de negocio:<br> **UI web** con Thymeleaf + Bootstrap y **API REST** documentada con Swagger.
+**Doble interfaz sobre la misma lógica de negocio:**<br> **UI web** con Thymeleaf + Bootstrap y **API REST** documentada con Swagger.
 <br/>
 **Autenticación con Spring Security**: JWT para la API y sesión para la web, <br>con **3 roles** (ADMIN, CO-ADMIN, BACKOFFICE) y dashboard de administración.
 <br/>
